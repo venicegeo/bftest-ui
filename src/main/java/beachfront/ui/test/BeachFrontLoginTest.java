@@ -1,4 +1,34 @@
+/*******************************************************************************
+* Copyright 2016, RadiantBlue Technologies, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*******************************************************************************/
+
 package beachfront.ui.test;
+
+/**
+ *
+ *    @author 		RahulsIM
+ *    PROJECT: 		Beachfront project 
+ *    CLASS: 		BeachFrontLoginTest class to test the login 
+ *    				functionality of Beachfront UI
+ *              ** REVISION HISTORY : **
+ *    Created: 		8/19/2016
+ *    Updated: 
+ *					8/26/2016 Enhancing BF login test automation to 
+ *					read user credentials and app URL from environment variables.
+ *
+*/
 
 import static org.junit.Assert.fail;
 import java.util.concurrent.TimeUnit;
@@ -18,25 +48,62 @@ public class BeachFrontLoginTest {
   private String baseUrl;
   private boolean acceptNextAlert = true;
   private StringBuffer verificationErrors = new StringBuffer();
-
+  private String userName;
+  private String passwd;
+  private BFUITestUtil bfUIUtil;
+  
+  /**
+   *  setUp() to initialize the BeachFront UI login test.
+   *  Uses BFUITestUtil to initialize Beachfront UI URL and it's 
+   *  login credentials
+   * @throws Exception
+   */
   @Before
   public void setUp() throws Exception {
     driver = new ChromeDriver();
-    baseUrl = "http://localhost:8082/";
+    bfUIUtil = new BFUITestUtil();
+    
+    userName = bfUIUtil.getUserName();
+    passwd = bfUIUtil.getPasswd();
+    baseUrl = bfUIUtil.getBaseUrl();
+    
+    System.out.println("userName: "+userName);
+    System.out.println("passwd: "+passwd);
+    System.out.println("baseUrl: "+baseUrl);
+    if (userName == null || passwd == null || baseUrl == null) {
+    	throw new Exception("Beachfront UI URL and it's credentials failed to initialize from environment variables or properties file");
+    }
     driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
   }
 
+  /**
+   *  testBeachFrontLoginTest() to actually test the BeachFront UI
+   *  login screen by using Chrome browser
+   *  
+   * @throws Exception
+   */
   @Test
   public void testBeachFrontLoginTest() throws Exception {
-    driver.get(baseUrl + "/login#0:27674:110,0");
+    driver.get(baseUrl);
+    
+    driver.findElement(By.cssSelector("input")).clear();
+    driver.findElement(By.cssSelector("input")).sendKeys(userName);
+    driver.findElement(By.cssSelector("input[type=\"password\"]")).clear();
+    driver.findElement(By.cssSelector("input[type=\"password\"]")).sendKeys(passwd);
+    
+    Thread.sleep(5000);
     driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();
     System.out.println("After Launching Beach Front and logging in");
     Thread.sleep(5000);
-    System.out.println("Closing Window");
   }
 
+  /**
+   *  To clean up the resources used and shut down the browser session
+   * @throws Exception
+   */
   @After
   public void tearDown() throws Exception {
+	System.out.println("Closing Browser Session");
     driver.quit();
     String verificationErrorString = verificationErrors.toString();
     if (!"".equals(verificationErrorString)) {
@@ -44,7 +111,7 @@ public class BeachFrontLoginTest {
     }
 
   }
-
+  
   private boolean isElementPresent(By by) {
     try {
       driver.findElement(by);
