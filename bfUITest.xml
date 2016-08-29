@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Beachfront UI test suite run">
+  <test name="BF UI Login test">
+    <classes>
+      <class name="beachfront.ui.test.BeachFrontLoginTest"/>
+    </classes>
+  </test>
+</suite>
