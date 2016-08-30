@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>beachfront.ui.test</groupId>
-  <artifactId>bf-ui-test</artifactId>
+<!--   <artifactId>bf-ui-test</artifactId>  -->
+  <artifactId>bftest-ui</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-<!--  <name>bf-ui-test</name> -->
-  <name>bftest-ui</name>
+  <name>bfui-test</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -16,10 +16,12 @@
   </properties>
 
   <build>
-    <sourceDirectory>src</sourceDirectory>
+     <sourceDirectory>src</sourceDirectory>
+     <testSourceDirectory>src</testSourceDirectory>
+ 
     <resources>
       <resource>
-          <directory>src/main/java</directory>
+          <directory>src</directory>
           <includes>
               <include>**/*.properties</include>
           </includes>
@@ -35,14 +37,25 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.18.1</version>
-        <configuration>
-		<suiteXmlFiles>
-			<!-- TestNG suite XML files -->
-			<suiteXmlFile>bfUITest.xml</suiteXmlFile>
-		</suiteXmlFiles>
-        </configuration>
+        <version>2.19.1</version>
+        <executions>
+          <execution>
+            <id>bfuitest</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+			  <useManifestOnlyJar>true</useManifestOnlyJar>              
+		      <suiteXmlFiles>
+			    <!-- TestNG suite XML files -->
+			    <suiteXmlFile>bfUITest.xml</suiteXmlFile>
+		      </suiteXmlFiles>
+            </configuration>
+          </execution>
+          </executions>
       </plugin>
     </plugins>
   </build>
@@ -64,6 +77,7 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>6.8.8</version>
+            <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
