@@ -51,11 +51,13 @@
               <goal>test</goal>
             </goals>
             <configuration>
-			  <useManifestOnlyJar>true</useManifestOnlyJar>              
+<!--         	      <useManifestOnlyJar>true</useManifestOnlyJar>              
+-->
 		      <suiteXmlFiles>
 			    <!-- TestNG suite XML files -->
 			    <suiteXmlFile>bfUITest.xml</suiteXmlFile>
 		      </suiteXmlFiles>
+		      <skipTests>TestSuite</skipTests>
             </configuration>
           </execution>
           </executions>
