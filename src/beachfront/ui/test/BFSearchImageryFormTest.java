@@ -16,7 +16,22 @@
 
 package beachfront.ui.test;
 
-import static org.junit.Assert.fail;
+/**
+*
+*    @author           RahulsIM
+*    PROJECT:          Beachfront project
+*    CLASS:            BFSearchImageryFormTest class to test the
+*                      Happy path scenario of Imagery Search
+*                      request form
+*              ** REVISION HISTORY : **
+*    Created:   8/31/2016
+*    Updates:
+*    		    9/1/16-Automated select create job, select geographic area to 
+*    			 successfully display Source imagery search form	
+*    			9/2/16-Automated data entry into Source imagery search form and 
+*    			submit to get the response imagery results 
+*
+*/
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +47,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.support.ui.Select;
 
 public class BFSearchImageryFormTest {
 	  private WebDriver driver;
@@ -40,6 +56,7 @@ public class BFSearchImageryFormTest {
 	  private StringBuffer verificationErrors = new StringBuffer();
 	  private String userName;
 	  private String passwd;
+	  private String apiKey;
 	  private BFUITestUtil bfUIUtil;
 
 	/**
@@ -55,10 +72,12 @@ public class BFSearchImageryFormTest {
 	    userName = bfUIUtil.getUserName();
 	    passwd = bfUIUtil.getPasswd();
 	    baseUrl = bfUIUtil.getBaseUrl();
+	    apiKey = bfUIUtil.getApiKey();
 	    
 	    System.out.println("userName: "+userName);
 	    System.out.println("passwd: "+passwd);
 	    System.out.println("baseUrl: "+baseUrl);
+	    System.out.println("apiKey: "+apiKey);
 	    if (userName == null || passwd == null || baseUrl == null) {
 	    	throw new Exception("Beachfront UI URL and it's credentials failed to initialize from environment variables or properties file");
 	    }
@@ -72,11 +91,12 @@ public class BFSearchImageryFormTest {
 	@After
 	public void tearDown() throws Exception {
 		System.out.println("BFSearchImageryFormTest.Closing Browser Session");
-	    driver.quit();
+/*	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
 	    }
+*/	    
 	}
 
 	/**
@@ -106,10 +126,12 @@ public class BFSearchImageryFormTest {
 
 		    Thread.sleep(2000);
 			driver.findElement(By.className("Navigation-linkCreateJob")).click(); 
+//			driver.findElement(By.className("Navigation__linkCreateJobs")).click(); 
 		    System.out.println("After requesting create job form");
 		    Thread.sleep(2000);
 		    
 		    WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
+//		    WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap__root canvas"));     
 			Thread.sleep(200); //To avoid any race condition
 
 		    canvas.getLocation().move(500, 500); //start
@@ -117,7 +139,7 @@ public class BFSearchImageryFormTest {
 
 		    canvas.getLocation().moveBy(250, 250); //click to select search area
 		    canvas.click();
-		    Thread.sleep(2000); //To avoid any race condition
+		    Thread.sleep(500); //To avoid any race condition
 
 		    Locatable hoverItem = (Locatable) canvas;
 		    Mouse mouse = ((HasInputDevices) driver).getMouse();
@@ -126,21 +148,33 @@ public class BFSearchImageryFormTest {
 		    Thread.sleep(200);
 		    Actions builder = new Actions(driver);
 		    builder.moveToElement(canvas,100,90).click().build().perform();
-		    System.out.println("After getting coordinates and clicking");
+		    System.out.println("After getting coordinates");
 		    Thread.sleep(200);
 		    Action drawAction = builder.moveByOffset(100, 60) // second point
 		            .click()
 		            .build();
 		    drawAction.perform();
 		   
-		    /*
-		    Action drawAction = builder.moveToElement(canvas,100,90)  // start point
-		                 .click()
-		                 .moveByOffset(100, 60) // second point
-		                 .click()
-		                 .build();
-		       drawAction.perform();*/
-		       System.out.println("After selecting canvas");
+	       System.out.println("After selecting canvas");
+	       
+	       // populating API key on the Imagery search form
+		   driver.findElement(By.cssSelector("input[type=\"password\"]")).clear();
+		   driver.findElement(By.cssSelector("input[type=\"password\"]")).sendKeys(apiKey);
+		   
+		   // Changing From date field for Date of Capture imagery search criteria
+		   driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("01/01/2015");
+//		   driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("2015-01-01");
+
+			Thread.sleep(2000); //To avoid any race condition
+		    //Changing the cloud cover slider to 15%
+		    driver.findElement(By.cssSelector("input[type=\"range\"]")).sendKeys("15");
+			Thread.sleep(5000); //To avoid any race condition
+
+			// Defaulted to none so not needed
+		    //new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
+
+		    // Submitting the search criteria
+		    driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();		   
 	}
 
 }
