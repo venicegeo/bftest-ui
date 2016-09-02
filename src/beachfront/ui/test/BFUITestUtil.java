@@ -44,9 +44,11 @@ class BFUITestUtil {
 	  private String baseUrl;
 	  private String userName;
 	  private String passwd;
+	  private String apiKey;
 	  private static final String uIdProp = "BFUI_USER";
 	  private static final String uPswdProp = "BFUI_PASS";  
 	  private static final String baseUrlProp = "baseUrl";
+	  private static final String apiKeyProp = "API_Key";
 	  private Properties prop = new Properties();
 	  private String propFileName = "BFUIUtil.properties";
 	  private InputStream inStream;
@@ -81,12 +83,20 @@ class BFUITestUtil {
 		return passwd;
 	}
 
+	/**
+	 * @return the apiKey
+	 */
+	String getApiKey() {
+		return apiKey;
+	}
+
 	/*
 	 * private method initializeCredentials() to initialize the private 
 	 * variables:
 	 *     baseUrl
 	 *     userName
 	 *     passwd
+	 *     apiKey
 	 * by either:
 	 * 1> Checking the environment variables 
 	 * OR 
@@ -99,10 +109,11 @@ class BFUITestUtil {
 			userName = System.getenv(uIdProp);
 		    passwd = System.getenv(uPswdProp);
 		    baseUrl = System.getenv(baseUrlProp);
+		    apiKey = System.getenv(apiKeyProp);
 
 		    // If the Beachfront UI URL and it's credentials are not set as environment
 		    // variables then check for them in BFUIUtil.properties file
-		    if (userName == null || passwd == null || baseUrl == null) {
+		    if (userName == null || passwd == null || baseUrl == null || apiKey == null) {
 		      try {
 
 		    	// initialize  
@@ -117,6 +128,7 @@ class BFUITestUtil {
 		    	baseUrl = prop.getProperty(baseUrlProp);
 		    	userName = prop.getProperty(uIdProp);
 		    	passwd = prop.getProperty(uPswdProp);
+		    	apiKey = prop.getProperty(apiKeyProp);
 		    	
 		      } catch (Exception e) { 
 		    	  e.printStackTrace();
