@@ -5,4 +5,9 @@
       <class name="beachfront.ui.test.BeachFrontLoginTest"/>
     </classes>
   </test>
+  <test name="BF Search Imagery Form Submit test">
+    <classes>
+      <class name="beachfront.ui.test.BFSearchImageryFormTest"/>
+    </classes>
+  </test>
 </suite>
