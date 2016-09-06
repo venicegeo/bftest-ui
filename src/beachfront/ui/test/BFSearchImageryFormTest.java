@@ -29,10 +29,13 @@ package beachfront.ui.test;
 *    		    9/1/16-Automated select create job, select geographic area to 
 *    			 successfully display Source imagery search form	
 *    			9/2/16-Automated data entry into Source imagery search form and 
-*    			submit to get the response imagery results 
+*    			submit to get the response imagery results
+*    			9/6/16 - Changes to have the cloud cover slider set to <50% and
+*    			close the browser after submitting Source imagery search form. 
 *
 */
 
+import static org.junit.Assert.fail;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -47,7 +50,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.internal.Locatable;
-import org.openqa.selenium.support.ui.Select;
 
 public class BFSearchImageryFormTest {
 	  private WebDriver driver;
@@ -91,12 +93,12 @@ public class BFSearchImageryFormTest {
 	@After
 	public void tearDown() throws Exception {
 		System.out.println("BFSearchImageryFormTest.Closing Browser Session");
-/*	    driver.quit();
+	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
 	    }
-*/	    
+	    
 	}
 
 	/**
@@ -166,15 +168,18 @@ public class BFSearchImageryFormTest {
 //		   driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("2015-01-01");
 
 			Thread.sleep(2000); //To avoid any race condition
-		    //Changing the cloud cover slider to 15%
+		    //Changing the cloud cover slider to <50%
+		    driver.findElement(By.cssSelector("input[type=\"range\"]")).click();
+			Thread.sleep(500); //To avoid any race condition
 		    driver.findElement(By.cssSelector("input[type=\"range\"]")).sendKeys("15");
-			Thread.sleep(5000); //To avoid any race condition
 
 			// Defaulted to none so not needed
 		    //new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
 
 		    // Submitting the search criteria
 		    driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();		   
+		    System.out.println("After entering data and submitting Source Imagery search form");
+			Thread.sleep(5000); //To avoid any race condition
 	}
 
 }
