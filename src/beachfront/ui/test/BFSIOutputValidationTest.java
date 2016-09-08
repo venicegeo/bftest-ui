@@ -24,14 +24,8 @@ package beachfront.ui.test;
 *                      Happy path scenario of Imagery Search
 *                      request form
 *              ** REVISION HISTORY : **
-*    Created:   8/31/2016
+*    Created:   9/7/2016
 *    Updates:
-*    		    9/1/16-Automated select create job, select geographic area to 
-*    			 successfully display Source imagery search form	
-*    			9/2/16-Automated data entry into Source imagery search form and 
-*    			submit to get the response imagery results
-*    			9/6/16 - Changes to have the cloud cover slider set to <50% and
-*    			close the browser after submitting Source imagery search form. 
 *
 */
 
