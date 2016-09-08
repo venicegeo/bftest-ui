@@ -10,4 +10,9 @@
       <class name="beachfront.ui.test.BFSearchImageryFormTest"/>
     </classes>
   </test>
+  <test name="BF Search Imagery Output Validation test">
+    <classes>
+      <class name="beachfront.ui.test.BFSIOutputValidationTest"/>
+    </classes>
+  </test>
 </suite>
