@@ -32,6 +32,7 @@ package beachfront.ui.test;
 *    			submit to get the response imagery results
 *    			9/6/16 - Changes to have the cloud cover slider set to <50% and
 *    			close the browser after submitting Source imagery search form. 
+*    			09/08/2016 - Added Warning message if API Key is NULL. 
 *
 */
 
@@ -83,6 +84,11 @@ public class BFSearchImageryFormTest {
 	    if (userName == null || passwd == null || baseUrl == null) {
 	    	throw new Exception("Beachfront UI URL and it's credentials failed to initialize from environment variables or properties file");
 	    }
+
+	    if (apiKey == null) {
+	    	System.out.println("**** WARNING !!! The API Key to authenticate with Image source system is NULL");
+	    }	    
+	    
 	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
 
@@ -126,7 +132,7 @@ public class BFSearchImageryFormTest {
 		    driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();
 		    System.out.println("After Launching Beach Front and logging in");
 
-		    Thread.sleep(2000);
+		    Thread.sleep(5000);
 			driver.findElement(By.className("Navigation-linkCreateJob")).click(); 
 //			driver.findElement(By.className("Navigation__linkCreateJobs")).click(); 
 		    System.out.println("After requesting create job form");

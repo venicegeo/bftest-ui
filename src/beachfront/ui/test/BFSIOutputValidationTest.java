@@ -21,11 +21,16 @@ package beachfront.ui.test;
 *    @author           RahulsIM
 *    PROJECT:          Beachfront project
 *    CLASS:            BFSIOutputValidationTest class to test the
-*                      Happy path scenario of Imagery Search
-*                      request form
+*                      Happy path scenario of validating output
+*                      responses from submitting imagery search form
 *              ** REVISION HISTORY : **
 *    Created:   9/7/2016
-*    Updates:
+*    Updates:	
+*    		09/08/2016 - Updates as adding logic to validate fields 
+*    		in pop up panel for selected image. Also changes as added
+*    		Source system image id as property. 
+*    		
+*    			 
 *
 */
 
@@ -54,6 +59,7 @@ public class BFSIOutputValidationTest {
 	  private String userName;
 	  private String passwd;
 	  private String apiKey;
+	  private String imageID;
 	  private BFUITestUtil bfUIUtil;
 
 	/**
@@ -61,7 +67,7 @@ public class BFSIOutputValidationTest {
 	 */
 	@BeforeSuite
 	public void initialize() throws Exception {
-		System.out.println("In BFSIOutputValidationTest.initialize");  
+		System.out.println(">>>> In BFSIOutputValidationTest.initialize");  
 				
 	    driver = new ChromeDriver();
 	    bfUIUtil = new BFUITestUtil();
@@ -70,13 +76,20 @@ public class BFSIOutputValidationTest {
 	    passwd = bfUIUtil.getPasswd();
 	    baseUrl = bfUIUtil.getBaseUrl();
 	    apiKey = bfUIUtil.getApiKey();
+	    imageID = bfUIUtil.getImageID();
 	    
 	    System.out.println("userName: "+userName);
-	    System.out.println("passwd: "+passwd);
 	    System.out.println("baseUrl: "+baseUrl);
 	    System.out.println("apiKey: "+apiKey);
+	    System.out.println("imageID: "+imageID);
 	    if (userName == null || passwd == null || baseUrl == null) {
 	    	throw new Exception("Beachfront UI URL and it's credentials failed to initialize from environment variables or properties file");
+	    }
+	    if (apiKey == null) {
+	    	System.out.println("**** WARNING !!! The API Key to authenticate with Image source system is NULL");
+	    }
+	    if (imageID == null) {
+	    	System.out.println("**** WARNING !!! The IMAGE ID of Image source system(LANDSAT) for expected result of response image is NULL");
 	    }
 	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
@@ -89,7 +102,7 @@ public class BFSIOutputValidationTest {
 	   */
 	  @Test
 	  public void testStep1BFLogin() throws Exception {
-		System.out.println("In BFSIOutputValidationTest.testStep1BFLogin()");  
+		System.out.println(">>>> In BFSIOutputValidationTest.testStep1BFLogin()");  
 
 		driver.get(baseUrl);
 	    
@@ -108,18 +121,18 @@ public class BFSIOutputValidationTest {
 
 	
 	/**
-	   *  testStep2BFUIImagerySubmit() to accomplish testing of below functions of BF UI:
-	   *  a) After user successfully logs in to BF UI Appl
-	   *  b) Selection of Create Job link
-	   *  c) On the Canvas, specifying the geographic area
-	   *  d) Entering the input data into the Search imagery request form.
-	   *  e) Submit the form successfully 
-	   *  
-	   * @throws Exception
-	   */
+	 *  testStep2BFUIImagerySubmit() to accomplish testing of below functions of BF UI:
+	 *  a) After user successfully logs in to BF UI Appl
+	 *  b) Selection of Create Job link
+	 *  c) On the Canvas, specifying the geographic area
+	 *  d) Entering the input data into the Search imagery request form.
+	 *  e) Submit the form successfully 
+	 *  
+	 * @throws Exception
+	 */
 	@Test(dependsOnMethods = {"testStep1BFLogin"})
 	public void testStep2BFUIImagerySubmit() throws Exception {
-		System.out.println("In BFSIOutputValidationTest.testStep2BFUIImagerySubmit() ");  
+		System.out.println(">>>> In BFSIOutputValidationTest.testStep2BFUIImagerySubmit() ");  
 
 		driver.findElement(By.className("Navigation-linkCreateJob")).click(); 
 		System.out.println("After requesting create job form");
@@ -176,25 +189,25 @@ public class BFSIOutputValidationTest {
 	}
 
 	/**
-	   *  testStep3BFSIOutputVldtn() to accomplish testing of below functions of BF UI:
-	   *  a) After user enter the search criteria for image search catalog and submits
-	   *  b) Move to the map canvas panel
-	   *  c) Select the response image jpg file to display the pop up
-	   *     with properties of the selected response image
-	   *  d) Validate the below property fields for the selected image:
-   	   *		i.THUMBNAIL 
-       *       ii.DATE CAPTURED
-       *      iii.BANDS  
-       *       iv.CLOUD COVER
-       *        v.SENSOR NAME
-	   *  e) Click on the hyper link for the text “Click here to open” to display 
-	   *     the jpg image file
-	   *  
-	   * @throws Exception
-	   */
+	 *  testStep3BFSIOutputVldtn() to accomplish testing of below functions of BF UI:
+	 *  a) After user enter the search criteria for image search catalog and submits
+	 *  b) Move to the map canvas panel
+	 *  c) Select the response image jpg file to display the pop up
+	 *     with properties of the selected response image
+	 *  d) Validate the below property fields for the selected image:
+   	 *		i.THUMBNAIL 
+     *      ii.DATE CAPTURED
+     *      iii.BANDS  
+     *      iv.CLOUD COVER
+     *      v.SENSOR NAME
+	 *  e) Click on the hyper link for the text “Click here to open” to display 
+	 *     the jpg image file
+	 *  
+	 * @throws Exception
+	 */
 	@Test(dependsOnMethods = {"testStep2BFUIImagerySubmit"})
 	public void testStep3BFSIOutputVldtn() throws Exception {
-		System.out.println("In BFSIOutputValidationTest.testStep3BFSIOutputVldtn() ");  
+		System.out.println(">>>> In BFSIOutputValidationTest.testStep3BFSIOutputVldtn() ");  
 
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
@@ -204,8 +217,23 @@ public class BFSIOutputValidationTest {
 		System.out.println("After moving to canvas and selecting image jpg on canvas");
 	    Thread.sleep(5000); //To avoid any race condition
 
-		//driver.findElement(By.name("BANDS")); //Error
+	    // Ensuring the properties windows is displayed for the image selected
+	    // LANDSAT image id for selected image should be the title.
+	    driver.findElement(By.xpath("//*[@title='LC81210602015060LGN00']"));
+//	    driver.findElement(By.xpath("//*[@title=imageID]"));
+	    
+	    driver.findElement(By.xpath("//*[contains(text(),'Thumbnail')]"));
+	    
+	    driver.findElement(By.xpath("//*[contains(text(),'Date Captured')]"));
 
+		//driver.findElement(By.name("BANDS")); //Error
+	    //driver.findElement(By.xpath(".//span[contains(text(),'Bands')]"));
+	    driver.findElement(By.xpath("//*[contains(text(),'Bands')]"));
+		
+	    // driver.findElement(By.name("Date Captured")); //Error
+	    //driver.findElement(By.id("Date Captured")); //Error
+	    //driver.findElement(By.cssSelector("Date Captured")); //Error
+	    //driver.findElement(By.className("Date Captured")); //Error
 	    
 		// Test to Click on the hyper link for “Click here to open” 
 		// to open the separate tab to display the jpg image file

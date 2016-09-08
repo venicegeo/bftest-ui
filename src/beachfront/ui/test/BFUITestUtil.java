@@ -14,6 +14,8 @@
 * limitations under the License.
 *******************************************************************************/
 
+package beachfront.ui.test;
+
 /**
  * Because the utility BFUITestUtil class will fetch user credentials from 
  * BFUIUtil properties file hence giving this class package level access and
@@ -21,11 +23,10 @@
  * level classes can retrieve the credentials information. 
  * 
  * BFUIUtil.properties file should be packaged in jar from under 
- * src/main/java/beachfront.ui.test so it remains hidden and is
+ * src/beachfront.ui.test so it remains hidden and is
  * in class path for runtime access
  * 
  */
-package beachfront.ui.test;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -37,7 +38,12 @@ import java.util.Properties;
  *    CLASS: 		BFUITestUtil class to to initialize the Beachfront 
  *    				UI URL and it's credentials
  *              ** REVISION HISTORY : **
- * 	  Created:		8/27/2016
+ * 	  Created:		08/27/2016
+ *    Updates:
+ *    				09/02/2016 - Added API Key which is used to authenticate 
+ *    				to the image source like Planet Labs
+ *    				09/08/2016 - Added Image ID. This is the image id from the 
+ *    				source image system like image id from LANDSAT of Planet Labs. 
  */
 class BFUITestUtil {
 
@@ -45,10 +51,12 @@ class BFUITestUtil {
 	  private String userName;
 	  private String passwd;
 	  private String apiKey;
+	  private String imageID;
 	  private static final String uIdProp = "BFUI_USER";
 	  private static final String uPswdProp = "BFUI_PASS";  
 	  private static final String baseUrlProp = "baseUrl";
 	  private static final String apiKeyProp = "API_Key";
+	  private static final String imageIDProp = "IMAGE_ID";
 	  private Properties prop = new Properties();
 	  private String propFileName = "BFUIUtil.properties";
 	  private InputStream inStream;
@@ -90,6 +98,15 @@ class BFUITestUtil {
 		return apiKey;
 	}
 
+	/**
+	 * @return the imageID
+	 * This is the image id from the source image system like 
+	 * image id from LANDSAT
+	 */
+	String getImageID() {
+		return imageID;
+	}
+
 	/*
 	 * private method initializeCredentials() to initialize the private 
 	 * variables:
@@ -97,6 +114,7 @@ class BFUITestUtil {
 	 *     userName
 	 *     passwd
 	 *     apiKey
+	 *     imageID
 	 * by either:
 	 * 1> Checking the environment variables 
 	 * OR 
@@ -110,10 +128,11 @@ class BFUITestUtil {
 		    passwd = System.getenv(uPswdProp);
 		    baseUrl = System.getenv(baseUrlProp);
 		    apiKey = System.getenv(apiKeyProp);
+		    imageID = System.getenv(imageIDProp);
 
 		    // If the Beachfront UI URL and it's credentials are not set as environment
 		    // variables then check for them in BFUIUtil.properties file
-		    if (userName == null || passwd == null || baseUrl == null || apiKey == null) {
+		    if (userName == null || passwd == null || baseUrl == null || apiKey == null || imageID == null) {
 		      try {
 
 		    	// initialize  
@@ -129,6 +148,7 @@ class BFUITestUtil {
 		    	userName = prop.getProperty(uIdProp);
 		    	passwd = prop.getProperty(uPswdProp);
 		    	apiKey = prop.getProperty(apiKeyProp);
+		    	imageID = prop.getProperty(imageIDProp);
 		    	
 		      } catch (Exception e) { 
 		    	  e.printStackTrace();
@@ -139,7 +159,7 @@ class BFUITestUtil {
 		        inStream.close(); 
 		      }
 		    	
-		    }//end of using BFUIUtil.properties file to initialize Beachfront UI URL and it's credentials
+		    }//end of using BFUIUtil.properties file to initialize Beachfront UI URL, it's credentials and other properties
 		    
 	  }// end of initializeCredentials()
 	  	
