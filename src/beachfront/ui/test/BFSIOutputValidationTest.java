@@ -16,30 +16,7 @@
 
 package beachfront.ui.test;
 
-/**
-*
-*    @author           RahulsIM
-*    PROJECT:          Beachfront project
-*    CLASS:            BFSIOutputValidationTest class to test the
-*                      Happy path scenario of validating output
-*                      responses from submitting imagery search form
-*              ** REVISION HISTORY : **
-*    Created:   9/7/2016
-*    Updates:	
-*    		09/08/2016 - Updates as adding logic to validate fields 
-*    		in pop up panel for selected image. Also changes as added
-*    		Source system image id as property. 
-*    		
-*    			 
-*
-*/
-
-import static org.junit.Assert.fail;
 import java.util.concurrent.TimeUnit;
-
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.AfterSuite;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -51,6 +28,30 @@ import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.internal.Locatable;
 
+import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
+import static org.junit.Assert.fail;
+
+/**
+*
+*    @author           RahulsIM
+*    PROJECT:          Beachfront project
+*    CLASS:            BFSIOutputValidationTest class to test the
+*                      Happy path scenario of validating output
+*                      responses from submitting imagery search form
+*              ** REVISION HISTORY : **
+*    Created:   9/7/2016
+*    Updates:
+*               09/08/2016 - Updates as adding logic to validate fields
+*               in pop up panel for selected image. Also changes as added
+*               Source system image id as property.
+*               09/09/2016 - Refactored code and added more logic for 
+*               response image validation
+*
+*/
 public class BFSIOutputValidationTest {
 	  private WebDriver driver;
 	  private String baseUrl;
@@ -61,15 +62,23 @@ public class BFSIOutputValidationTest {
 	  private String apiKey;
 	  private String imageID;
 	  private BFUITestUtil bfUIUtil;
+	  private static final String thumbnail = "Thumbnail";
+	  private static final String dateCaptured = "Date Captured";
+	  private static final String bands = "Bands";
+	  private static final String cloudCover = "Cloud Cover";
+	  private static final String sensorName = "Sensor Name";
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeSuite
 	public void initialize() throws Exception {
-		System.out.println(">>>> In BFSIOutputValidationTest.initialize");  
+		System.out.println(">>>> In BFSIOutputValidationTest.initialize  <<<<");  
 				
 	    driver = new ChromeDriver();
+
+//		driver = new FirefoxDriver();
+	    
 	    bfUIUtil = new BFUITestUtil();
 	    
 	    userName = bfUIUtil.getUserName();
@@ -102,7 +111,7 @@ public class BFSIOutputValidationTest {
 	   */
 	  @Test
 	  public void testStep1BFLogin() throws Exception {
-		System.out.println(">>>> In BFSIOutputValidationTest.testStep1BFLogin()");  
+		System.out.println(">>>> In BFSIOutputValidationTest.testStep1BFLogin() <<<<");  
 
 		driver.get(baseUrl);
 	    
@@ -116,6 +125,8 @@ public class BFSIOutputValidationTest {
 	    System.out.println("After Launching Beach Front and logging in");
 //	    assert driver.findElement(By.name("Beachfront"));
 	    Thread.sleep(5000);
+	    
+	    Assert.assertEquals("Beachfront", driver.getTitle());
 
 	  }
 
@@ -132,7 +143,7 @@ public class BFSIOutputValidationTest {
 	 */
 	@Test(dependsOnMethods = {"testStep1BFLogin"})
 	public void testStep2BFUIImagerySubmit() throws Exception {
-		System.out.println(">>>> In BFSIOutputValidationTest.testStep2BFUIImagerySubmit() ");  
+		System.out.println(">>>> In BFSIOutputValidationTest.testStep2BFUIImagerySubmit() <<<<");  
 
 		driver.findElement(By.className("Navigation-linkCreateJob")).click(); 
 		System.out.println("After requesting create job form");
@@ -189,25 +200,17 @@ public class BFSIOutputValidationTest {
 	}
 
 	/**
-	 *  testStep3BFSIOutputVldtn() to accomplish testing of below functions of BF UI:
+	 *  testStep3BFSIResponsePopup() to accomplish testing of below functions of BF UI:
 	 *  a) After user enter the search criteria for image search catalog and submits
 	 *  b) Move to the map canvas panel
 	 *  c) Select the response image jpg file to display the pop up
 	 *     with properties of the selected response image
-	 *  d) Validate the below property fields for the selected image:
-   	 *		i.THUMBNAIL 
-     *      ii.DATE CAPTURED
-     *      iii.BANDS  
-     *      iv.CLOUD COVER
-     *      v.SENSOR NAME
-	 *  e) Click on the hyper link for the text “Click here to open” to display 
-	 *     the jpg image file
 	 *  
 	 * @throws Exception
 	 */
 	@Test(dependsOnMethods = {"testStep2BFUIImagerySubmit"})
-	public void testStep3BFSIOutputVldtn() throws Exception {
-		System.out.println(">>>> In BFSIOutputValidationTest.testStep3BFSIOutputVldtn() ");  
+	public void testStep3BFSIResponsePopup() throws Exception {
+		System.out.println(">>>> In BFSIOutputValidationTest.testStep3BFSIResponsePopup() <<<<");  
 
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
@@ -215,47 +218,88 @@ public class BFSIOutputValidationTest {
 		canvas.getLocation().move(500, 500);
 		canvas.click();
 		System.out.println("After moving to canvas and selecting image jpg on canvas");
-	    Thread.sleep(5000); //To avoid any race condition
+	    Thread.sleep(2500); //To avoid any race condition
 
 	    // Ensuring the properties windows is displayed for the image selected
 	    // LANDSAT image id for selected image should be the title.
 	    driver.findElement(By.xpath("//*[@title='LC81210602015060LGN00']"));
-//	    driver.findElement(By.xpath("//*[@title=imageID]"));
+//	    driver.findElement(By.xpath("//*[@title=$imageID]")); //Error with imageID, @imageID, $imageID
 	    
-	    driver.findElement(By.xpath("//*[contains(text(),'Thumbnail')]"));
-	    
-	    driver.findElement(By.xpath("//*[contains(text(),'Date Captured')]"));
+		System.out.println("After validating properties popup is displayed for the response image selected");
+		Thread.sleep(2000); //Pause before exiting this test
+	}
+	
+	/**
+	 *  testStep4BFSIRespPropsVldtn() for properties validation in popup window:
+	 *  d) Validate the below property fields for the selected image:
+   	 *		i.THUMBNAIL 
+     *      ii.DATE CAPTURED
+     *      iii.BANDS  
+     *      iv.CLOUD COVER
+     *      v.SENSOR NAME
+	 *  
+	 * @throws Exception
+	 */
+	@Test(dependsOnMethods = {"testStep3BFSIResponsePopup"})
+	public void testStep4BFSIRespPropsVldtn() throws Exception {
+		System.out.println(">>>> In BFSIOutputValidationTest.testStep4BFSIRespPropsVldtn() <<<<");  
 
-		//driver.findElement(By.name("BANDS")); //Error
-	    //driver.findElement(By.xpath(".//span[contains(text(),'Bands')]"));
-	    driver.findElement(By.xpath("//*[contains(text(),'Bands')]"));
-		
+	    driver.findElement(By.xpath("//*[contains(text(),thumbnail)]"));
+		System.out.println(">> After validating THUMBNAIL property is displayed");
+	    
+	    driver.findElement(By.xpath("//*[contains(text(),dateCaptured)]"));
+		System.out.println(">> After validating DATE CAPTURED property is displayed");
 	    // driver.findElement(By.name("Date Captured")); //Error
 	    //driver.findElement(By.id("Date Captured")); //Error
 	    //driver.findElement(By.cssSelector("Date Captured")); //Error
 	    //driver.findElement(By.className("Date Captured")); //Error
+
+	    driver.findElement(By.xpath("//*[contains(text(),bands)]"));
+		System.out.println(">> After validating BANDS property is displayed");
+		//driver.findElement(By.name("BANDS")); //Error
+	    //driver.findElement(By.xpath(".//span[contains(text(),'Bands')]"));
+		
+	    driver.findElement(By.xpath("//*[contains(text(),cloudCover)]"));
+		System.out.println(">> After validating CLOUD COVER property is displayed");
+	    
+	    driver.findElement(By.xpath("//*[contains(text(),sensorName)]"));
+		System.out.println(">> After validating SENSOR NAME property is displayed");
+
+		Thread.sleep(500); //Pause before exiting this test
+	}
+
+	/**
+	 *  testStep5RespImageLink() to accomplish testing of below functions of BF UI:
+	 *  e) Click on the hyper link for the text “Click here to open” to display 
+	 *     the jpg image file in a separate tab
+	 *  
+	 * @throws Exception
+	 */
+	@Test(dependsOnMethods = {"testStep4BFSIRespPropsVldtn"})
+	public void testStep5RespImageLink() throws Exception {
+		System.out.println(">>>> In BFSIOutputValidationTest.testStep5RespImageLink() <<<<");  
 	    
 		// Test to Click on the hyper link for “Click here to open” 
 		// to open the separate tab to display the jpg image file
 		driver.findElement(By.linkText("Click here to open")).click();
-		System.out.println("After clicking on image link to open the jpg image file in separate tab");
+		System.out.println(">> After clicking on image link to open the jpg image file in separate tab");
 		
-		Thread.sleep(5000); //Pause before exiting this test
+		Thread.sleep(2000); //Pause before exiting this test
 	}
-	
+
 	/**
 	 *  To clean up the resources used and close the browser session
 	 * @throws Exception
 	 */
 	@AfterSuite
 	public void cleanUp() throws Exception {
-		System.out.println("BFSIOutputValidationTest.cleanUp Closing Browser Session");
-/*	    driver.quit();
+		System.out.println(">>>> BFSIOutputValidationTest.cleanUp Closing Browser Session <<<<");
+	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
 	    }
-*/	    
+	    
 	}
 	
 }
