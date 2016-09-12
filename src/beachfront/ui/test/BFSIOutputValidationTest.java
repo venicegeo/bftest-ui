@@ -16,28 +16,25 @@
 
 package beachfront.ui.test;
 
+import static org.junit.Assert.fail;
+
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.firefox.internal.ProfilesIni;
-
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.internal.Locatable;
-
 import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-
-import static org.junit.Assert.fail;
 
 /**
 *
@@ -81,14 +78,22 @@ public class BFSIOutputValidationTest {
 				
 //	    driver = new ChromeDriver();
 
-/*            Thread.sleep(3000L);
-            ProfilesIni profile = new ProfilesIni();
-            FirefoxProfile firefoxProfile = profile.getProfile("default");
+/*		
+		Thread.sleep(3000L);
+        ProfilesIni profile = new ProfilesIni();
+        FirefoxProfile firefoxProfile = profile.getProfile("default");
 
-                driver = new FirefoxDriver(firefoxProfile);
+        driver = new FirefoxDriver(firefoxProfile);
 */
-
-		driver = new FirefoxDriver();
+		
+		Thread.sleep(3000);
+		FirefoxProfile fp = new FirefoxProfile();
+		fp.setPreference("browser.startup.homepage", "about:blank");
+		fp.setPreference("startup.homepage_welcome_url", "about:blank");
+		fp.setPreference("startup.homepage_welcome_url.additional", "https://beachfront.int.geointservices.io/login");
+		
+		driver = new FirefoxDriver(fp);
+		System.out.println ("**** After launching firefox");
 	    
 	    bfUIUtil = new BFUITestUtil();
 	    
