@@ -21,6 +21,10 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.internal.ProfilesIni;
+
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
@@ -75,9 +79,16 @@ public class BFSIOutputValidationTest {
 	public void initialize() throws Exception {
 		System.out.println(">>>> In BFSIOutputValidationTest.initialize  <<<<");  
 				
-	    driver = new ChromeDriver();
+//	    driver = new ChromeDriver();
 
-//		driver = new FirefoxDriver();
+/*            Thread.sleep(3000L);
+            ProfilesIni profile = new ProfilesIni();
+            FirefoxProfile firefoxProfile = profile.getProfile("default");
+
+                driver = new FirefoxDriver(firefoxProfile);
+*/
+
+		driver = new FirefoxDriver();
 	    
 	    bfUIUtil = new BFUITestUtil();
 	    
