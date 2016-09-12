@@ -238,8 +238,7 @@ public class BFSIOutputValidationTest {
 
 	    // Ensuring the properties windows is displayed for the image selected
 	    // LANDSAT image id for selected image should be the title.
-	    driver.findElement(By.xpath("//*[@title='LC81210602015060LGN00']"));
-//	    driver.findElement(By.xpath("//*[@title=$imageID]")); //Error with imageID, @imageID, $imageID
+	   // driver.findElement(By.xpath("//*[@title='LC81210602015060LGN00']"));
 	    
 		System.out.println("After validating properties popup is displayed for the response image selected");
 		Thread.sleep(2000); //Pause before exiting this test
