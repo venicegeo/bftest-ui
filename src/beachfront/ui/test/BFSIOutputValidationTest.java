@@ -296,7 +296,8 @@ public class BFSIOutputValidationTest {
 	    
 		// Test to Click on the hyper link for “Click here to open” 
 		// to open the separate tab to display the jpg image file
-		driver.findElement(By.linkText("Click here to open")).click();
+//		driver.findElement(By.linkText("Click here to open")).click();
+		driver.findElement(By.partialLinkText("Click here to open")).click();
 		System.out.println(">> After clicking on image link to open the jpg image file in separate tab");
 		
 		Thread.sleep(2000); //Pause before exiting this test
