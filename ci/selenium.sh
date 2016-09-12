@@ -15,6 +15,10 @@ jar_pid=$!
 mvn clean install
 mvn surefire:test
 
+code=$?
+
 kill -9 $jar_pid
 
 rm -f $root/$artifact
+
+exit $code
