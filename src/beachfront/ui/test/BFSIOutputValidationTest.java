@@ -239,6 +239,7 @@ public class BFSIOutputValidationTest {
 	    // Ensuring the properties windows is displayed for the image selected
 	    // LANDSAT image id for selected image should be the title.
 	   // driver.findElement(By.xpath("//*[@title='LC81210602015060LGN00']"));
+	    System.out.println("*** Test Commented for Firefox");
 	    
 		System.out.println("After validating properties popup is displayed for the response image selected");
 		Thread.sleep(2000); //Pause before exiting this test
@@ -300,6 +301,7 @@ public class BFSIOutputValidationTest {
 //		driver.findElement(By.partialLinkText("Click here to open")).click();
 //		System.out.println(">> After clicking on image link to open the jpg image file in separate tab");
 		
+	    System.out.println("*** Test Commented for Firefox");
 		Thread.sleep(2000); //Pause before exiting this test
 	}
 
