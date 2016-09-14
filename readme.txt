@@ -1,5 +1,5 @@
 
-	**** TEST EXECUTIONT ****
+	**** TEST EXECUTION ****
 # Maven after running the designated tests, also runs the default test suite for which this project has no tests  
 # so maven runs an empty test suite that overwrites the report with 0 test cases issue.
 # This ReadMe has examples of maven commands to directly execute the Selenium tests through Surefire plugin for maven 
@@ -16,7 +16,7 @@ mvn -e surefire:test -Dtest=beachfront.ui.test.BeachFrontLoginTest
     API_Key
 # The BFUIUtil.properties file is located under the src/resources folder of the bftest-ui project
 
-	**** TEST EXECUTION RESULTS REPORT ****
+	**** TEST EXECUTION RESULTS REPORTS ****
 # When the test are executed, the metrics reports are generated under the below folder:
   > TestNG automation tests execution report is under:
       bftest-ui/target/surefire-reports/testng-native-result
