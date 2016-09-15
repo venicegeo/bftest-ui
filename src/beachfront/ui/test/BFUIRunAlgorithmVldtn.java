@@ -47,6 +47,7 @@ import org.testng.annotations.Test;
 *              ** REVISION HISTORY : **
 *    Created:   9/14/2016
 *    Updates:
+*    			9/15/2016: Changes for testing and using Firefox 
 *
 */
 public class BFUIRunAlgorithmVldtn {
@@ -63,6 +64,10 @@ public class BFUIRunAlgorithmVldtn {
 	  private static final String bands = "Bands";
 	  private static final String cloudCover = "Cloud Cover";
 	  private static final String sensorName = "Sensor Name";
+	  private static final String jobDetails = "Job Details";
+	  private static final String jobName = "Name";
+	  private static final String imageRqmts = "Image Requirements";
+	  private static final String selectAlgo = "Select Algorithm";
 
 	/**
 	 * @throws java.lang.Exception
@@ -71,7 +76,7 @@ public class BFUIRunAlgorithmVldtn {
 	public void initialize() throws Exception {
 		System.out.println(">>>> In BFUIRunAlgorithmVldtn.initialize  <<<<");  
 				
-	    driver = new ChromeDriver();
+//	    driver = new ChromeDriver();
 
 /*		
 		Thread.sleep(3000L);
@@ -80,7 +85,6 @@ public class BFUIRunAlgorithmVldtn {
 
       driver = new FirefoxDriver(firefoxProfile);
 */
-/*		
 		Thread.sleep(3000);
 		FirefoxProfile fp = new FirefoxProfile();
 		fp.setPreference("browser.startup.homepage", "about:blank");
@@ -89,8 +93,8 @@ public class BFUIRunAlgorithmVldtn {
 		
 		driver = new FirefoxDriver(fp);
 		System.out.println ("**** After launching firefox");
-*/	    
-	    bfUIUtil = new BFUITestUtil();
+
+		bfUIUtil = new BFUITestUtil();
 	    
 	    userName = bfUIUtil.getUserName();
 	    passwd = bfUIUtil.getPasswd();
@@ -159,7 +163,13 @@ public class BFUIRunAlgorithmVldtn {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-		Locatable hoverItem = (Locatable) canvas;
+	    canvas.getLocation().move(500, 500); //start
+		canvas.click();
+
+		canvas.getLocation().moveBy(250, 250); //click to select search area
+		canvas.click();
+	    
+/*		Locatable hoverItem = (Locatable) canvas;
 		Mouse mouse = ((HasInputDevices) driver).getMouse();
 		mouse.mouseMove(hoverItem.getCoordinates());
 //		Coordinates coord = mouse.mouseMove(hoverItem.getCoordinates());
@@ -175,8 +185,9 @@ public class BFUIRunAlgorithmVldtn {
 		            .build();
 		drawAction.perform();
 		canvas.click();
-		   
+*/		   
 	    System.out.println(">> After selecting bounding box as geographic search criteria area on canvas");
+		Thread.sleep(5000); //To avoid any race condition
 	       
 	    // populating API key on the Imagery search form
 		driver.findElement(By.cssSelector("input[type=\"password\"]")).clear();
@@ -217,9 +228,9 @@ public class BFUIRunAlgorithmVldtn {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-//		canvas.getLocation().move(500, 500);
-//		canvas.click();
-		Actions builder = new Actions(driver);
+		canvas.getLocation().move(500, 500);
+		canvas.click();
+/*		Actions builder = new Actions(driver);
 		builder.moveToElement(canvas,100,90).click().build().perform(); // first point
 		System.out.println(">> After getting coordinates");
 		Thread.sleep(500);
@@ -229,8 +240,8 @@ public class BFUIRunAlgorithmVldtn {
 		            .click()
 		            .build();
 		drawAction.perform();
-
-		System.out.println("After moving to canvas and selecting image jpg on canvas");
+*/
+		System.out.println(">> After moving to canvas and selecting image jpg on canvas");
 	    Thread.sleep(2500); //To avoid any race condition
 
 	    // Ensuring the properties windows is displayed for the image selected
@@ -247,10 +258,10 @@ public class BFUIRunAlgorithmVldtn {
 	 *  testStep4BFSIRespPropsVldtn() for properties validation in popup window:
 	 *  d) Validate the below property fields for the selected image:
  	 *		i.THUMBNAIL 
-   *      ii.DATE CAPTURED
-   *      iii.BANDS  
-   *      iv.CLOUD COVER
-   *      v.SENSOR NAME
+     *      ii.DATE CAPTURED
+     *      iii.BANDS  
+     *      iv.CLOUD COVER
+     *      v.SENSOR NAME
 	 *  
 	 * @throws Exception
 	 */
@@ -298,17 +309,42 @@ public class BFUIRunAlgorithmVldtn {
 	}
 
 	/**
+	 *  testStep6BFRunAlgoVldtn() for validation of Run Algorithm form on LHS panel:
+ 	 *		i.Job Name 
+     *      ii.BANDS  
+     *      iii.CLOUD COVER
+	 *  
+	 * @throws Exception
+	 */
+	@Test(dependsOnMethods = {"testStep5RespImageLink"})
+	public void testStep6BFRunAlgoVldtn() throws Exception {
+		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep6BFRunAlgoVldtn() <<<<");  
+
+	    driver.findElement(By.xpath("//*[contains(text(),'Job Details')]"));
+	    driver.findElement(By.xpath("//*[contains(text(),'Name')]"));
+		System.out.println(">> After validating Job Details section");
+	    
+	    driver.findElement(By.xpath("//*[contains(text(),bands)]"));
+		System.out.println(">> After validating BANDS property is displayed");
+		
+	    driver.findElement(By.xpath("//*[contains(text(),cloudCover)]"));
+		System.out.println(">> After validating CLOUD COVER property is displayed");
+
+		Thread.sleep(500); //Pause before exiting this test
+	}
+	
+	/**
 	 *  To clean up the resources used and close the browser session
 	 * @throws Exception
 	 */
 	@AfterSuite
 	public void cleanUp() throws Exception {
 		System.out.println(">>>> BFUIRunAlgorithmVldtn.cleanUp Closing Browser Session <<<<");
-	    driver.quit();
+/*	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
-	    }	    
+	    } */	    
 	}
 	
 }
