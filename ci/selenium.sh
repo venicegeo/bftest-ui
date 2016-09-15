@@ -4,6 +4,8 @@ pushd `dirname $0` > /dev/null
 root=$(pwd -P)/..
 popd > /dev/null
 
+type firefox >/dev/null 2>&1 && firefox -v
+
 artifact=selenium-server-standalone-3.0.0-beta3.jar
 url="http://selenium-release.storage.googleapis.com/3.0-beta3/$artifact"
 
