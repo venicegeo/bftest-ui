@@ -90,9 +90,13 @@ public class BFSIOutputValidationTest {
 		FirefoxProfile fp = new FirefoxProfile();
 		fp.setPreference("browser.startup.homepage", "about:blank");
 		fp.setPreference("startup.homepage_welcome_url", "about:blank");
-		fp.setPreference("startup.homepage_welcome_url.additional", "https://beachfront.int.geointservices.io/login");
+//		fp.setPreference("startup.homepage_welcome_url.additional", "https://beachfront.int.geointservices.io/login");
+		fp.setPreference("startup.homepage_welcome_url.additional", "about:blank");
 		
 		driver = new FirefoxDriver(fp);
+
+//		driver = new FirefoxDriver();
+
 		System.out.println ("**** After launching firefox");
 	    
 	    bfUIUtil = new BFUITestUtil();

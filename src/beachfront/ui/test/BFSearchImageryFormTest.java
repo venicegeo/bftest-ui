@@ -46,6 +46,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
@@ -67,9 +69,18 @@ public class BFSearchImageryFormTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		System.out.println("In BFSearchImageryFormTest.setUp");  
+	    System.out.println("In BFSearchImageryFormTest.setUp");  
 				
-	    driver = new ChromeDriver();
+//	    driver = new ChromeDriver();
+
+    	    Thread.sleep(3000);
+    	    FirefoxProfile fp = new FirefoxProfile();
+    	    fp.setPreference("browser.startup.homepage", "about:blank");
+    	    fp.setPreference("startup.homepage_welcome_url", "about:blank");
+    	    fp.setPreference("startup.homepage_welcome_url.additional", "about:blank");
+		
+    	    driver = new FirefoxDriver(fp);
+
 	    bfUIUtil = new BFUITestUtil();
 	    
 	    userName = bfUIUtil.getUserName();

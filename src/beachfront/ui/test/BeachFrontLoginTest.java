@@ -43,6 +43,8 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 
 public class BeachFrontLoginTest {
   private WebDriver driver;
@@ -63,7 +65,16 @@ public class BeachFrontLoginTest {
   public void setUp() throws Exception {
   
 	System.out.println("In BeachFrontLoginTest.setUp");  
-    driver = new ChromeDriver();
+//    driver = new ChromeDriver();
+		
+    Thread.sleep(3000);
+    FirefoxProfile fp = new FirefoxProfile();
+    fp.setPreference("browser.startup.homepage", "about:blank");
+    fp.setPreference("startup.homepage_welcome_url", "about:blank");
+    fp.setPreference("startup.homepage_welcome_url.additional", "about:blank");
+		
+    driver = new FirefoxDriver(fp);
+
     bfUIUtil = new BFUITestUtil();
     
     userName = bfUIUtil.getUserName();
