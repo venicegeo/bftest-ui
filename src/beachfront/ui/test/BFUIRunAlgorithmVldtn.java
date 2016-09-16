@@ -16,8 +16,6 @@
 
 package beachfront.ui.test;
 
-import static org.junit.Assert.fail;
-
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -31,6 +29,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -134,7 +133,7 @@ public class BFUIRunAlgorithmVldtn {
 	    driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();
 	    Thread.sleep(500);
 
-	    driver.manage().window().maximize();
+	    //driver.manage().window().maximize();
 	    Assert.assertEquals("Beachfront", driver.getTitle());
 	    System.out.println("After Launching Beach Front and logging in");
 
@@ -163,29 +162,19 @@ public class BFUIRunAlgorithmVldtn {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-	    canvas.getLocation().move(500, 500); //start
-		canvas.click();
-
-		canvas.getLocation().moveBy(250, 250); //click to select search area
-		canvas.click();
-	    
-/*		Locatable hoverItem = (Locatable) canvas;
+		Locatable hoverItem = (Locatable) canvas;
 		Mouse mouse = ((HasInputDevices) driver).getMouse();
 		mouse.mouseMove(hoverItem.getCoordinates());
-//		Coordinates coord = mouse.mouseMove(hoverItem.getCoordinates());
 		Thread.sleep(200);
 		Actions builder = new Actions(driver);
-		builder.moveToElement(canvas,100,90).click().build().perform();
-		System.out.println(">> After getting coordinates");
-		Thread.sleep(200);
 		Action drawAction = builder.moveByOffset(400, 200) // second point
 		            .click()
-		            .moveByOffset(520, 120)
+		            .moveByOffset(720, 120)
 		            .click()
 		            .build();
 		drawAction.perform();
 		canvas.click();
-*/		   
+		   
 	    System.out.println(">> After selecting bounding box as geographic search criteria area on canvas");
 		Thread.sleep(5000); //To avoid any race condition
 	       
@@ -194,16 +183,26 @@ public class BFUIRunAlgorithmVldtn {
 		driver.findElement(By.cssSelector("input[type=\"password\"]")).sendKeys(apiKey);
 		   
 		// Changing From date field for Date of Capture imagery search criteria
-		driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("01/01/2015");
+		System.out.println("++++ driver: "+driver.getWindowHandle());
+
+		if (driver instanceof ChromeDriver) {
+			driver.findElement(By.cssSelector("input[type=\"date\"]")).clear();
+			driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("01/01/2015");			
+		} else if (driver instanceof FirefoxDriver) {
+			driver.findElement(By.cssSelector("input[type=\"text\"]")).clear();
+			driver.findElement(By.cssSelector("input[type=\"text\"]")).sendKeys("01/01/2015");						
+		}
 
 		Thread.sleep(2000); //To avoid any race condition
 		//Changing the cloud cover slider to <15%
+		//driver.findElement(By.cssSelector("input[type=\"range\"]")).click();
 		driver.findElement(By.cssSelector("input[type=\"range\"]")).sendKeys("15");
 		Thread.sleep(500); //To avoid any race condition
 
 		// Defaulted to none so not needed
 		//new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).click();
 		//new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
+	    new Select(driver.findElement(By.cssSelector("label.CatalogSearchCriteria-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
 
 		// Submitting the search criteria
 		driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();		   
@@ -228,25 +227,28 @@ public class BFUIRunAlgorithmVldtn {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-		canvas.getLocation().move(500, 500);
-		canvas.click();
-/*		Actions builder = new Actions(driver);
-		builder.moveToElement(canvas,100,90).click().build().perform(); // first point
-		System.out.println(">> After getting coordinates");
 		Thread.sleep(500);
-		Action drawAction = builder.moveByOffset(400, 200) // second point; selects the image for running algorithm job
-		            .click()
-		            .moveByOffset(520, 120)
+		
+//	    canvas.getLocation().move(134, -11); //start
+	    canvas.getLocation().move(534, 189); //start
+		canvas.click();
+		System.out.println(">> After canvas click");
+		Thread.sleep(7000);
+
+		Actions builder = new Actions(driver);
+		Action drawAction = builder.moveByOffset(534, 189) // second point; selects the image for running algorithm job
 		            .click()
 		            .build();
 		drawAction.perform();
-*/
+		Thread.sleep(3000);
+
 		System.out.println(">> After moving to canvas and selecting image jpg on canvas");
 	    Thread.sleep(2500); //To avoid any race condition
 
 	    // Ensuring the properties windows is displayed for the image selected
 	    // LANDSAT image id for selected image should be the title.
-	    driver.findElement(By.xpath("//*[@title='LC81240462015273LGN00']"));
+	    driver.findElement(By.xpath("//*[@title='LC81040682016200LGN00']"));
+//	    driver.findElement(By.xpath("//*[@title='LC81240462015273LGN00']"));
 //	    driver.findElement(By.xpath("//*[@title='LC81210602015060LGN00']"));
 //	    driver.findElement(By.xpath("//*[@title=$imageID]")); //Error with imageID, @imageID, $imageID
 	    
