@@ -31,6 +31,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Mouse;
 import org.openqa.selenium.internal.Locatable;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -51,6 +52,8 @@ import org.testng.annotations.Test;
 *               Source system image id as property.
 *               09/09/2016 - Refactored code and added more logic for 
 *               response image validation
+*               09/12/2016 - Changes to resolve issues related to CI with
+*               Jenkins using Firefox
 *
 */
 public class BFSIOutputValidationTest {
@@ -90,13 +93,9 @@ public class BFSIOutputValidationTest {
 		FirefoxProfile fp = new FirefoxProfile();
 		fp.setPreference("browser.startup.homepage", "about:blank");
 		fp.setPreference("startup.homepage_welcome_url", "about:blank");
-//		fp.setPreference("startup.homepage_welcome_url.additional", "https://beachfront.int.geointservices.io/login");
-		fp.setPreference("startup.homepage_welcome_url.additional", "about:blank");
+		fp.setPreference("startup.homepage_welcome_url.additional", "https://beachfront.int.geointservices.io/login");
 		
 		driver = new FirefoxDriver(fp);
-
-//		driver = new FirefoxDriver();
-
 		System.out.println ("**** After launching firefox");
 	    
 	    bfUIUtil = new BFUITestUtil();
@@ -172,7 +171,8 @@ public class BFSIOutputValidationTest {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-	    canvas.getLocation().move(500, 500); //start
+//	    canvas.getLocation().move(500, 500); //start
+		canvas.getLocation().move(534, 189);
 		canvas.click();
 
 		canvas.getLocation().moveBy(250, 250); //click to select search area
@@ -184,7 +184,7 @@ public class BFSIOutputValidationTest {
 		mouse.mouseMove(hoverItem.getCoordinates());
 //		Coordinates coord = mouse.mouseMove(hoverItem.getCoordinates());
 		Thread.sleep(200);
-		Actions builder = new Actions(driver);
+/*		Actions builder = new Actions(driver);
 		builder.moveToElement(canvas,100,90).click().build().perform();
 		System.out.println("After getting coordinates");
 		Thread.sleep(200);
@@ -192,7 +192,7 @@ public class BFSIOutputValidationTest {
 		            .click()
 		            .build();
 		drawAction.perform();
-		   
+*/		   
 	    System.out.println("After selecting geographic search criteria area on canvas");
 	       
 	    // populating API key on the Imagery search form
@@ -200,17 +200,20 @@ public class BFSIOutputValidationTest {
 		driver.findElement(By.cssSelector("input[type=\"password\"]")).sendKeys(apiKey);
 		   
 		// Changing From date field for Date of Capture imagery search criteria
-		driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("01/01/2015");
-
+		// 9/19/2016 - Date field is now a test type input box on all browsers
+		//driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("01/01/2015");
+		driver.findElement(By.cssSelector("input[type=\"text\"]")).clear();
+		driver.findElement(By.cssSelector("input[type=\"text\"]")).sendKeys("2015-01-01");						
+				
 		Thread.sleep(2000); //To avoid any race condition
 		//Changing the cloud cover slider to <50%
-		driver.findElement(By.cssSelector("input[type=\"range\"]")).click();
-		Thread.sleep(500); //To avoid any race condition
+		//driver.findElement(By.cssSelector("input[type=\"range\"]")).click();
 		driver.findElement(By.cssSelector("input[type=\"range\"]")).sendKeys("15");
 
-		// Defaulted to none so not needed
+		// Set Spatial Filter to "None"
 		//new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).click();
 		//new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
+	    new Select(driver.findElement(By.cssSelector("label.CatalogSearchCriteria-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
 
 		// Submitting the search criteria
 		driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();		   
@@ -235,15 +238,15 @@ public class BFSIOutputValidationTest {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-		canvas.getLocation().move(500, 500);
+//		canvas.getLocation().move(500, 500);
+		canvas.getLocation().move(534, 189);
 		canvas.click();
 		System.out.println("After moving to canvas and selecting image jpg on canvas");
 	    Thread.sleep(2500); //To avoid any race condition
 
 	    // Ensuring the properties windows is displayed for the image selected
 	    // LANDSAT image id for selected image should be the title.
-	   // driver.findElement(By.xpath("//*[@title='LC81210602015060LGN00']"));
-	    System.out.println("*** Test Commented for Firefox");
+	    driver.findElement(By.xpath("//*[@title='LC81210602015204LGN00']"));
 	    
 		System.out.println("After validating properties popup is displayed for the response image selected");
 		Thread.sleep(2000); //Pause before exiting this test
@@ -301,11 +304,11 @@ public class BFSIOutputValidationTest {
 	    
 		// Test to Click on the hyper link for “Click here to open” 
 		// to open the separate tab to display the jpg image file
-//		driver.findElement(By.linkText("Click here to open")).click();
+		driver.findElement(By.linkText("Click here to open")).click();
 //		driver.findElement(By.partialLinkText("Click here to open")).click();
-//		System.out.println(">> After clicking on image link to open the jpg image file in separate tab");
+		System.out.println(">> After clicking on image link to open the jpg image file in separate tab");
 		
-	    System.out.println("*** Test Commented for Firefox");
+//	    System.out.println("*** Test Commented for Firefox");
 		Thread.sleep(2000); //Pause before exiting this test
 	}
 

@@ -185,6 +185,9 @@ public class BFUIRunAlgorithmVldtn {
 		// Changing From date field for Date of Capture imagery search criteria
 		System.out.println("++++ driver: "+driver.getWindowHandle());
 
+		driver.findElement(By.cssSelector("input[type=\"text\"]")).clear();
+		driver.findElement(By.cssSelector("input[type=\"text\"]")).sendKeys("2015-01-01");						
+		/*
 		if (driver instanceof ChromeDriver) {
 			driver.findElement(By.cssSelector("input[type=\"date\"]")).clear();
 			driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("01/01/2015");			
@@ -192,6 +195,7 @@ public class BFUIRunAlgorithmVldtn {
 			driver.findElement(By.cssSelector("input[type=\"text\"]")).clear();
 			driver.findElement(By.cssSelector("input[type=\"text\"]")).sendKeys("01/01/2015");						
 		}
+		*/
 
 		Thread.sleep(2000); //To avoid any race condition
 		//Changing the cloud cover slider to <15%
@@ -199,7 +203,7 @@ public class BFUIRunAlgorithmVldtn {
 		driver.findElement(By.cssSelector("input[type=\"range\"]")).sendKeys("15");
 		Thread.sleep(500); //To avoid any race condition
 
-		// Defaulted to none so not needed
+		// Set Spatial Filter to "None"
 		//new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).click();
 		//new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
 	    new Select(driver.findElement(By.cssSelector("label.CatalogSearchCriteria-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
@@ -226,21 +230,67 @@ public class BFUIRunAlgorithmVldtn {
 
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
-
-		Thread.sleep(500);
+	    
+		Actions builder = new Actions(driver);
+		builder.click().perform();
+		
+	    canvas.getLocation().move(534,188); //start
+		canvas.click();
+		System.out.println(">> After canvas click: ");
+		Thread.sleep(2000);
+		builder.moveToElement(canvas,534,188).doubleClick().build().perform();
+		canvas.click();
+	    //canvas.getLocation().move(534,188); //start
+		//canvas.click();
+		builder.moveToElement(canvas,536,187).click().build().perform();
+		Thread.sleep(2000);
 		
 //	    canvas.getLocation().move(134, -11); //start
-	    canvas.getLocation().move(534, 189); //start
-		canvas.click();
-		System.out.println(">> After canvas click");
-		Thread.sleep(7000);
+//	    canvas.getLocation().move(133, -12); //start
+	    int y = 190;
+	    while (y>160) {
+		    int x= 480;
+	    	while (x<545) {
+	    		builder.moveToElement(canvas,x,y).click().build().perform();
+				//Thread.sleep(500);
+//			    canvas.getLocation().move(x, y); //start
+				//canvas.click();
+				Thread.sleep(1500);
+	    		if (driver.findElement(By.linkText("Click here to open")) != null) {
+	    			System.out.println("Click here link exists for ("+x+","+y+")");
+	    		}
+				System.out.println(">> After canvas click (x,y): ("+x+","+y+")");
+				x+=1;
+	    	}
+			y-=1;
+	    }
+	    
+	    //canvas.getLocation().move(534, 189); //start
+		//canvas.click();
+		Thread.sleep(2000);
 
-		Actions builder = new Actions(driver);
-		Action drawAction = builder.moveByOffset(534, 189) // second point; selects the image for running algorithm job
+/*		Action drawAction = builder.moveByOffset(534, 189) // second point; selects the image for running algorithm job
 		            .click()
 		            .build();
 		drawAction.perform();
-		Thread.sleep(3000);
+*/		
+//		builder.click().perform();
+//		Thread.sleep(2000);
+		
+//		builder.moveToElement(canvas,533,188).click().build().perform();
+
+		/*
+		Action drawAction = builder.moveByOffset(400, 200) // second point
+	            .click()
+//	            .moveByOffset(133, -12)
+	            .moveByOffset(533, 188)
+	            .doubleClick()
+	            .build();
+		drawAction.perform();
+*/
+//		canvas.click();
+		
+//		Thread.sleep(5000);
 
 		System.out.println(">> After moving to canvas and selecting image jpg on canvas");
 	    Thread.sleep(2500); //To avoid any race condition
