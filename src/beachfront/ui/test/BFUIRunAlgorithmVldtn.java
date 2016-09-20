@@ -19,6 +19,7 @@ package beachfront.ui.test;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -238,7 +239,7 @@ public class BFUIRunAlgorithmVldtn {
 		canvas.click();
 		System.out.println(">> After canvas click: ");
 		Thread.sleep(2000);
-		builder.moveToElement(canvas,534,188).doubleClick().build().perform();
+		builder.moveToElement(canvas,534,188).click().build().perform();
 		canvas.click();
 	    //canvas.getLocation().move(534,188); //start
 		//canvas.click();
@@ -256,7 +257,8 @@ public class BFUIRunAlgorithmVldtn {
 //			    canvas.getLocation().move(x, y); //start
 				//canvas.click();
 				Thread.sleep(1500);
-	    		if (driver.findElement(By.linkText("Click here to open")) != null) {
+				By clickLinkElem = By.linkText("Click here to open");
+	    		if (this.isElementPresent(clickLinkElem)) {
 	    			System.out.println("Click here link exists for ("+x+","+y+")");
 	    		}
 				System.out.println(">> After canvas click (x,y): ("+x+","+y+")");
@@ -398,5 +400,13 @@ public class BFUIRunAlgorithmVldtn {
 	      fail(verificationErrorString);
 	    } */	    
 	}
-	
+
+	private boolean isElementPresent(By by) {
+		try {
+		      driver.findElement(by);
+		      return true;
+		} catch (NoSuchElementException e) {
+		      return false;
+		}
+	  }
 }
