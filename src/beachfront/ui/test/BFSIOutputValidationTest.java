@@ -171,17 +171,10 @@ public class BFSIOutputValidationTest {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-/*	    canvas.getLocation().move(500, 500); //start
-//	    canvas.clear(); // Error cannot clear
-//		canvas.getLocation().move(534, 200);
-		canvas.click();
-		canvas.getLocation().moveBy(250, 250); //click to select search area
-		canvas.click();
-*/
 		Actions builder = new Actions(driver);
 		builder.moveToElement(canvas,534,250).click().build().perform();
 	    canvas.click();
-		Thread.sleep(5000); //To avoid any race condition
+		Thread.sleep(1000); //To avoid any race condition
 
 		Locatable hoverItem = (Locatable) canvas;
 		Mouse mouse = ((HasInputDevices) driver).getMouse();
@@ -232,18 +225,12 @@ public class BFSIOutputValidationTest {
 
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
-
-/*		canvas.getLocation().move(500, 500);
-//		canvas.getLocation().move(534, 189);
-		canvas.click(); */
 	    
 		Actions builder = new Actions(driver);
 		builder.moveToElement(canvas,534,250).click().build().perform();
-//	    canvas.click();
-		Thread.sleep(2000); //To avoid any race condition
+		Thread.sleep(1000); //To avoid any race condition
 		
 		System.out.println("After moving to canvas and selecting image jpg on canvas");
-	    Thread.sleep(2500); //To avoid any race condition
 
 	    // Ensuring the properties windows is displayed for the image selected
 	    // LANDSAT image id for selected image should be the title.
@@ -321,12 +308,11 @@ public class BFSIOutputValidationTest {
 	@AfterSuite
 	public void cleanUp() throws Exception {
 		System.out.println(">>>> BFSIOutputValidationTest.cleanUp Closing Browser Session <<<<");
-/*	    driver.quit();
+	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
 	    }
-*/	    
 	}
 	
 }
