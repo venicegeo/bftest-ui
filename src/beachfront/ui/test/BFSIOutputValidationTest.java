@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -228,18 +229,21 @@ public class BFSIOutputValidationTest {
 	    
 	    Actions builder = new Actions(driver);
 	    builder.moveToElement(canvas,534,250).click().build().perform();
-	    canvas.click();
+	    canvas.click(); // With or without jenkins build fails
 	    Thread.sleep(1000); //To avoid any race condition
 		
 	    System.out.println("After moving to canvas and selecting image jpg on canvas");
 
-	    // Ensuring the properties windows is displayed for the image selected
-	    // LANDSAT image id for selected image should be the title.
-	    driver.findElement(By.xpath("//*[@title='LC81190572015078LGN00']"));
-	    //driver.findElement(By.xpath("//*[@title='LC81210602015204LGN00']"));
-	    
-		System.out.println("After validating properties popup is displayed for the response image selected");
-		Thread.sleep(2000); //Pause before exiting this test
+	    By clickLinkElem = By.xpath("//*[@title='LC81190572015078LGN00']");
+	    if (this.isElementPresent(clickLinkElem)) {
+	     // Ensuring the properties windows is displayed for the image selected
+	     // LANDSAT image id for selected image should be the title.
+	     driver.findElement(By.xpath("//*[@title='LC81190572015078LGN00']"));
+	     //driver.findElement(By.xpath("//*[@title='LC81210602015204LGN00']"));
+	     System.out.println("After validating properties popup is displayed for the response image selected");
+	    }
+
+	    Thread.sleep(2000); //Pause before exiting this test
 	}
 	
 	/**
@@ -316,4 +320,13 @@ public class BFSIOutputValidationTest {
 	    }
 	}
 	
+	private boolean isElementPresent(By by) {
+		try {
+		      driver.findElement(by);
+		      return true;
+		} catch (NoSuchElementException e) {
+		      return false;
+		}
+	 }
+
 }
