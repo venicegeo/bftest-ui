@@ -25,8 +25,9 @@ package beachfront.ui.test;
  *              ** REVISION HISTORY : **
  *    Created: 		8/19/2016
  *    Updated: 
- *					8/26/2016 Enhancing BF login test automation to 
+ *					8/26/2016: Enhancing BF login test automation to 
  *					read user credentials and app URL from environment variables.
+ *    			    9/20/2016: Changes for testing and using Firefox 
  *
 */
 
@@ -45,6 +46,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.testng.Assert;
 
 public class BeachFrontLoginTest {
   private WebDriver driver;
@@ -65,16 +67,14 @@ public class BeachFrontLoginTest {
   public void setUp() throws Exception {
   
 	System.out.println("In BeachFrontLoginTest.setUp");  
-//    driver = new ChromeDriver();
-		
-    Thread.sleep(3000);
-    FirefoxProfile fp = new FirefoxProfile();
-    fp.setPreference("browser.startup.homepage", "about:blank");
-    fp.setPreference("startup.homepage_welcome_url", "about:blank");
-    fp.setPreference("startup.homepage_welcome_url.additional", "about:blank");
-		
-    driver = new FirefoxDriver(fp);
-
+    //driver = new ChromeDriver();
+	FirefoxProfile fp = new FirefoxProfile();
+	fp.setPreference("browser.startup.homepage", "about:blank");
+	fp.setPreference("startup.homepage_welcome_url", "about:blank");
+	fp.setPreference("startup.homepage_welcome_url.additional", "https://beachfront.int.geointservices.io/login");
+	
+	driver = new FirefoxDriver(fp);
+	
     bfUIUtil = new BFUITestUtil();
     
     userName = bfUIUtil.getUserName();
@@ -100,19 +100,20 @@ public class BeachFrontLoginTest {
   public void testBeachFrontLoginTest() throws Exception {
 	System.out.println("In BeachFrontLoginTest.testBeachFrontLoginTest");  
 
-	  driver.get(baseUrl);
+	driver.get(baseUrl);
     
     driver.findElement(By.cssSelector("input")).clear();
     driver.findElement(By.cssSelector("input")).sendKeys(userName);
     driver.findElement(By.cssSelector("input[type=\"password\"]")).clear();
     driver.findElement(By.cssSelector("input[type=\"password\"]")).sendKeys(passwd);
     
-    Thread.sleep(5000);
+    Thread.sleep(1500);
     driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();
+    Thread.sleep(2000);
+    Assert.assertEquals("Beachfront", driver.getTitle());
+
     System.out.println("After Launching Beach Front and logging in");
-//    assert isElementPresent(By.name("Beachfront"));
-//    assert driver.findElement(By.name("Beachfront"));
-    Thread.sleep(5000);
+
   }
 
   /**

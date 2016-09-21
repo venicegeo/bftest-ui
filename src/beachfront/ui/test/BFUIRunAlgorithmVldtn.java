@@ -174,7 +174,7 @@ public class BFUIRunAlgorithmVldtn {
 		            .click()
 		            .build();
 		drawAction.perform();
-		canvas.click();
+		//canvas.click();
 		   
 	    System.out.println(">> After selecting bounding box as geographic search criteria area on canvas");
 		Thread.sleep(5000); //To avoid any race condition

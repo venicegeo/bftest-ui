@@ -46,6 +46,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
@@ -69,7 +71,14 @@ public class BFSearchImageryFormTest {
 	public void setUp() throws Exception {
 		System.out.println("In BFSearchImageryFormTest.setUp");  
 				
-	    driver = new ChromeDriver();
+//	    driver = new ChromeDriver();
+		FirefoxProfile fp = new FirefoxProfile();
+		fp.setPreference("browser.startup.homepage", "about:blank");
+		fp.setPreference("startup.homepage_welcome_url", "about:blank");
+		fp.setPreference("startup.homepage_welcome_url.additional", "https://beachfront.int.geointservices.io/login");
+		
+		driver = new FirefoxDriver(fp);
+		
 	    bfUIUtil = new BFUITestUtil();
 	    
 	    userName = bfUIUtil.getUserName();
@@ -119,9 +128,9 @@ public class BFSearchImageryFormTest {
 	   */
 	@Test
 	public void testBFSearchImageryFormTest() throws Exception {
-		System.out.println("In BFSearchImageryFormTest.testBFSearchImageryFormTest() ");  
+		    System.out.println("In BFSearchImageryFormTest.testBFSearchImageryFormTest() ");  
 
-		  driver.get(baseUrl);
+		    driver.get(baseUrl);
 		    
 		    driver.findElement(By.cssSelector("input")).clear();
 		    driver.findElement(By.cssSelector("input")).sendKeys(userName);
@@ -132,45 +141,41 @@ public class BFSearchImageryFormTest {
 		    driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();
 		    System.out.println("After Launching Beach Front and logging in");
 
-		    Thread.sleep(5000);
+		    Thread.sleep(2000);
 			driver.findElement(By.className("Navigation-linkCreateJob")).click(); 
 //			driver.findElement(By.className("Navigation__linkCreateJobs")).click(); 
 		    System.out.println("After requesting create job form");
 		    Thread.sleep(2000);
 		    
-		    WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
-//		    WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap__root canvas"));     
-			Thread.sleep(200); //To avoid any race condition
+			WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
+		    Thread.sleep(200); //To avoid any race condition
 
-		    canvas.getLocation().move(500, 500); //start
+			Locatable hoverItem = (Locatable) canvas;
+			Mouse mouse = ((HasInputDevices) driver).getMouse();
+			mouse.mouseMove(hoverItem.getCoordinates());
+			Thread.sleep(200);
+			Actions builder = new Actions(driver);
+			builder.moveToElement(canvas,720,120).click().build().perform();
 		    canvas.click();
+			Thread.sleep(1000); //To avoid any race condition
 
-		    canvas.getLocation().moveBy(250, 250); //click to select search area
-		    canvas.click();
-		    Thread.sleep(500); //To avoid any race condition
-
-		    Locatable hoverItem = (Locatable) canvas;
-		    Mouse mouse = ((HasInputDevices) driver).getMouse();
-		    mouse.mouseMove(hoverItem.getCoordinates());
-//		    Coordinates coord = mouse.mouseMove(hoverItem.getCoordinates());
-		    Thread.sleep(200);
-		    Actions builder = new Actions(driver);
-		    builder.moveToElement(canvas,100,90).click().build().perform();
-		    System.out.println("After getting coordinates");
-		    Thread.sleep(200);
-		    Action drawAction = builder.moveByOffset(100, 60) // second point
-		            .click()
-		            .build();
-		    drawAction.perform();
-		   
-	       System.out.println("After selecting canvas");
+/*			Actions builder = new Actions(driver);
+			Action drawAction = builder.moveByOffset(400, 200) // second point
+			            .click()
+			            .moveByOffset(720, 120)
+			            .click()
+			            .build();
+			drawAction.perform();
+*/			//canvas.click();
+			   
+		    System.out.println(">> After selecting bounding box as geographic search criteria area on canvas");
 	       
 	       // populating API key on the Imagery search form
 		   driver.findElement(By.cssSelector("input[type=\"password\"]")).clear();
 		   driver.findElement(By.cssSelector("input[type=\"password\"]")).sendKeys(apiKey);
 		   
 		   // Changing From date field for Date of Capture imagery search criteria
-			// 9/19/2016 - Date field is now a test type input box on all browsers
+			// 9/19/2016 - Date field is now a text type input box on all browsers
 			//driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("01/01/2015");
 			driver.findElement(By.cssSelector("input[type=\"text\"]")).clear();
 			driver.findElement(By.cssSelector("input[type=\"text\"]")).sendKeys("2015-01-01");						

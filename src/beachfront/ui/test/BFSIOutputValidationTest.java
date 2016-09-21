@@ -143,7 +143,7 @@ public class BFSIOutputValidationTest {
 	    driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();
 	    System.out.println("After Launching Beach Front and logging in");
 //	    assert driver.findElement(By.name("Beachfront"));
-	    Thread.sleep(5000);
+	    Thread.sleep(2000);
 	    
 	    Assert.assertEquals("Beachfront", driver.getTitle());
 
@@ -171,29 +171,24 @@ public class BFSIOutputValidationTest {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-//	    canvas.getLocation().move(500, 500); //start
-		canvas.getLocation().move(534, 189);
+/*	    canvas.getLocation().move(500, 500); //start
+//	    canvas.clear(); // Error cannot clear
+//		canvas.getLocation().move(534, 200);
 		canvas.click();
-
 		canvas.getLocation().moveBy(250, 250); //click to select search area
 		canvas.click();
-		Thread.sleep(500); //To avoid any race condition
+*/
+		Actions builder = new Actions(driver);
+		builder.moveToElement(canvas,534,250).click().build().perform();
+	    canvas.click();
+		Thread.sleep(5000); //To avoid any race condition
 
 		Locatable hoverItem = (Locatable) canvas;
 		Mouse mouse = ((HasInputDevices) driver).getMouse();
 		mouse.mouseMove(hoverItem.getCoordinates());
-//		Coordinates coord = mouse.mouseMove(hoverItem.getCoordinates());
 		Thread.sleep(200);
-/*		Actions builder = new Actions(driver);
-		builder.moveToElement(canvas,100,90).click().build().perform();
-		System.out.println("After getting coordinates");
-		Thread.sleep(200);
-		Action drawAction = builder.moveByOffset(100, 60) // second point
-		            .click()
-		            .build();
-		drawAction.perform();
-*/		   
-	    System.out.println("After selecting geographic search criteria area on canvas");
+
+		System.out.println("After selecting geographic search criteria area on canvas");
 	       
 	    // populating API key on the Imagery search form
 		driver.findElement(By.cssSelector("input[type=\"password\"]")).clear();
@@ -238,15 +233,22 @@ public class BFSIOutputValidationTest {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
-//		canvas.getLocation().move(500, 500);
-		canvas.getLocation().move(534, 189);
-		canvas.click();
+/*		canvas.getLocation().move(500, 500);
+//		canvas.getLocation().move(534, 189);
+		canvas.click(); */
+	    
+		Actions builder = new Actions(driver);
+		builder.moveToElement(canvas,534,250).click().build().perform();
+//	    canvas.click();
+		Thread.sleep(2000); //To avoid any race condition
+		
 		System.out.println("After moving to canvas and selecting image jpg on canvas");
 	    Thread.sleep(2500); //To avoid any race condition
 
 	    // Ensuring the properties windows is displayed for the image selected
 	    // LANDSAT image id for selected image should be the title.
-	    driver.findElement(By.xpath("//*[@title='LC81210602015204LGN00']"));
+	    driver.findElement(By.xpath("//*[@title='LC81190572015078LGN00']"));
+	    //driver.findElement(By.xpath("//*[@title='LC81210602015204LGN00']"));
 	    
 		System.out.println("After validating properties popup is displayed for the response image selected");
 		Thread.sleep(2000); //Pause before exiting this test
@@ -319,12 +321,12 @@ public class BFSIOutputValidationTest {
 	@AfterSuite
 	public void cleanUp() throws Exception {
 		System.out.println(">>>> BFSIOutputValidationTest.cleanUp Closing Browser Session <<<<");
-	    driver.quit();
+/*	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
 	    }
-	    
+*/	    
 	}
 	
 }
