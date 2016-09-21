@@ -6,6 +6,7 @@ popd > /dev/null
 
 type firefox >/dev/null 2>&1 && firefox -v
 
+
 artifact=selenium-server-standalone-2.53.1.jar
 url="http://selenium-release.storage.googleapis.com/2.53/$artifact"
 
