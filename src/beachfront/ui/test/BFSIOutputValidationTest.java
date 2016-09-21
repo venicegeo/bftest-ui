@@ -169,11 +169,11 @@ public class BFSIOutputValidationTest {
 		Thread.sleep(2000);
 		    
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
-	    Thread.sleep(200); //To avoid any race condition
+	        Thread.sleep(200); //To avoid any race condition
 
 		Actions builder = new Actions(driver);
 		builder.moveToElement(canvas,534,250).click().build().perform();
-	    canvas.click();
+	        canvas.click();
 		Thread.sleep(1000); //To avoid any race condition
 
 		Locatable hoverItem = (Locatable) canvas;
@@ -223,14 +223,15 @@ public class BFSIOutputValidationTest {
 	public void testStep3BFSIResponsePopup() throws Exception {
 		System.out.println(">>>> In BFSIOutputValidationTest.testStep3BFSIResponsePopup() <<<<");  
 
-		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
+	    WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 	    
-		Actions builder = new Actions(driver);
-		builder.moveToElement(canvas,534,250).click().build().perform();
-		Thread.sleep(1000); //To avoid any race condition
+	    Actions builder = new Actions(driver);
+	    builder.moveToElement(canvas,534,250).click().build().perform();
+	    canvas.click();
+	    Thread.sleep(1000); //To avoid any race condition
 		
-		System.out.println("After moving to canvas and selecting image jpg on canvas");
+	    System.out.println("After moving to canvas and selecting image jpg on canvas");
 
 	    // Ensuring the properties windows is displayed for the image selected
 	    // LANDSAT image id for selected image should be the title.
