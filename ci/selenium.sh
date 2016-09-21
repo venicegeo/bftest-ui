@@ -15,7 +15,6 @@ java -jar $root/$artifact &
 jar_pid=$!
 
 mvn clean install
-mvn surefire:test
 
 code=$?
 
