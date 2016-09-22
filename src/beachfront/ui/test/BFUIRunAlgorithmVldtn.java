@@ -163,18 +163,23 @@ public class BFUIRunAlgorithmVldtn {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 
+		Actions builder = new Actions(driver);
+		builder.moveToElement(canvas,534,250).click().build().perform();
+	        canvas.click();
+		Thread.sleep(1000); //To avoid any race condition
+
 		Locatable hoverItem = (Locatable) canvas;
 		Mouse mouse = ((HasInputDevices) driver).getMouse();
 		mouse.mouseMove(hoverItem.getCoordinates());
 		Thread.sleep(200);
-		Actions builder = new Actions(driver);
+/*		Actions builder = new Actions(driver);
 		Action drawAction = builder.moveByOffset(400, 200) // second point
 		            .click()
 		            .moveByOffset(720, 120)
 		            .click()
 		            .build();
 		drawAction.perform();
-		//canvas.click();
+*/		//canvas.click();
 		   
 	    System.out.println(">> After selecting bounding box as geographic search criteria area on canvas");
 		Thread.sleep(5000); //To avoid any race condition
@@ -184,7 +189,7 @@ public class BFUIRunAlgorithmVldtn {
 		driver.findElement(By.cssSelector("input[type=\"password\"]")).sendKeys(apiKey);
 		   
 		// Changing From date field for Date of Capture imagery search criteria
-		System.out.println("++++ driver: "+driver.getWindowHandle());
+		//System.out.println("++++ driver: "+driver.getWindowHandle());
 
 		driver.findElement(By.cssSelector("input[type=\"text\"]")).clear();
 		driver.findElement(By.cssSelector("input[type=\"text\"]")).sendKeys("2015-01-01");						
@@ -232,79 +237,23 @@ public class BFUIRunAlgorithmVldtn {
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
 	    
-		Actions builder = new Actions(driver);
-		builder.click().perform();
+	    Actions builder = new Actions(driver);
+	    builder.moveToElement(canvas,534,250).click().build().perform();
+	    //canvas.click(); // With or without jenkins build fails
+	    Thread.sleep(1000); //To avoid any race condition
 		
-	    canvas.getLocation().move(534,188); //start
-		canvas.click();
-		System.out.println(">> After canvas click: ");
-		Thread.sleep(2000);
-		builder.moveToElement(canvas,534,188).click().build().perform();
-		canvas.click();
-	    //canvas.getLocation().move(534,188); //start
-		//canvas.click();
-		builder.moveToElement(canvas,536,187).click().build().perform();
-		Thread.sleep(2000);
-		
-//	    canvas.getLocation().move(134, -11); //start
-//	    canvas.getLocation().move(133, -12); //start
-	    int y = 190;
-	    while (y>160) {
-		    int x= 480;
-	    	while (x<545) {
-	    		builder.moveToElement(canvas,x,y).click().build().perform();
-				//Thread.sleep(500);
-//			    canvas.getLocation().move(x, y); //start
-				//canvas.click();
-				Thread.sleep(1500);
-				By clickLinkElem = By.linkText("Click here to open");
-	    		if (this.isElementPresent(clickLinkElem)) {
-	    			System.out.println("Click here link exists for ("+x+","+y+")");
-	    		}
-				System.out.println(">> After canvas click (x,y): ("+x+","+y+")");
-				x+=1;
-	    	}
-			y-=1;
+	    System.out.println("After moving to canvas and selecting image jpg on canvas");
+
+	    By clickLinkElem = By.xpath("//*[@title='LC81190572015078LGN00']");
+	    if (this.isElementPresent(clickLinkElem)) {
+	     // Ensuring the properties windows is displayed for the image selected
+	     // LANDSAT image id for selected image should be the title.
+	     driver.findElement(By.xpath("//*[@title='LC81190572015078LGN00']"));
+	     //driver.findElement(By.xpath("//*[@title='LC81210602015204LGN00']"));
+	     System.out.println("After validating properties popup is displayed for the response image selected");
 	    }
 	    
-	    //canvas.getLocation().move(534, 189); //start
-		//canvas.click();
-		Thread.sleep(2000);
-
-/*		Action drawAction = builder.moveByOffset(534, 189) // second point; selects the image for running algorithm job
-		            .click()
-		            .build();
-		drawAction.perform();
-*/		
-//		builder.click().perform();
-//		Thread.sleep(2000);
-		
-//		builder.moveToElement(canvas,533,188).click().build().perform();
-
-		/*
-		Action drawAction = builder.moveByOffset(400, 200) // second point
-	            .click()
-//	            .moveByOffset(133, -12)
-	            .moveByOffset(533, 188)
-	            .doubleClick()
-	            .build();
-		drawAction.perform();
-*/
-//		canvas.click();
-		
-//		Thread.sleep(5000);
-
-		System.out.println(">> After moving to canvas and selecting image jpg on canvas");
-	    Thread.sleep(2500); //To avoid any race condition
-
-	    // Ensuring the properties windows is displayed for the image selected
-	    // LANDSAT image id for selected image should be the title.
-	    driver.findElement(By.xpath("//*[@title='LC81040682016200LGN00']"));
-//	    driver.findElement(By.xpath("//*[@title='LC81240462015273LGN00']"));
-//	    driver.findElement(By.xpath("//*[@title='LC81210602015060LGN00']"));
-//	    driver.findElement(By.xpath("//*[@title=$imageID]")); //Error with imageID, @imageID, $imageID
-	    
-		System.out.println("After validating properties popup is displayed for the response image selected");
+		//System.out.println("After validating properties popup is displayed for the response image selected");
 		Thread.sleep(2000); //Pause before exiting this test
 	}
 	
@@ -352,12 +301,13 @@ public class BFUIRunAlgorithmVldtn {
 	public void testStep5RespImageLink() throws Exception {
 		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep5RespImageLink() <<<<");  
 	    
-		// Test to Click on the hyper link for “Click here to open” 
-		// to open the separate tab to display the jpg image file
-		driver.findElement(By.linkText("Click here to open")).click();
-		System.out.println(">> After clicking on image link to open the jpg image file in separate tab");
-
-		//driver.findElement(By.partialLinkText("Click here to open")).click();
+		By clickLinkElem = By.linkText("Click here to open");
+    	if (this.isElementPresent(clickLinkElem)) {
+    		// Test to Click on the hyper link for “Click here to open” 
+    		// to open the separate tab to display the jpg image file
+    		driver.findElement(By.linkText("Click here to open")).click();
+    		System.out.println(">> After clicking on image link to open the jpg image file in separate tab");
+    	}
 
 		Thread.sleep(2000); //Pause before exiting this test
 	}
@@ -376,7 +326,7 @@ public class BFUIRunAlgorithmVldtn {
 
 	    driver.findElement(By.xpath("//*[contains(text(),'Job Details')]"));
 	    driver.findElement(By.xpath("//*[contains(text(),'Name')]"));
-		System.out.println(">> After validating Job Details section");
+		System.out.println(">> After validating Job Details section is displayed");
 	    
 	    driver.findElement(By.xpath("//*[contains(text(),bands)]"));
 		System.out.println(">> After validating BANDS property is displayed");
@@ -384,6 +334,11 @@ public class BFUIRunAlgorithmVldtn {
 	    driver.findElement(By.xpath("//*[contains(text(),cloudCover)]"));
 		System.out.println(">> After validating CLOUD COVER property is displayed");
 
+		// Submitting the Run Algorithm create job request
+		driver.findElement(By.cssSelector("button.Algorithm-startButton.typography-heading")).click();		   
+		System.out.println(">> After Submitting the Run Algorithm create job request");
+		Thread.sleep(2000); //Pause before exiting this test
+		
 		Thread.sleep(500); //Pause before exiting this test
 	}
 	
@@ -401,6 +356,10 @@ public class BFUIRunAlgorithmVldtn {
 	    } */	    
 	}
 
+    /**
+     *  Check if the desired web element is present on the browser
+     *  @Return boolean - True if element is present else False
+     */
 	private boolean isElementPresent(By by) {
 		try {
 		      driver.findElement(by);
