@@ -22,10 +22,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.Mouse;
@@ -35,6 +33,8 @@ import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+
+import static org.junit.Assert.fail;
 
 /**
 *
@@ -48,6 +48,10 @@ import org.testng.annotations.Test;
 *    Created:   9/14/2016
 *    Updates:
 *    			9/15/2016: Changes for testing and using Firefox 
+*				9/16 - 9/22: Changes to support latest code changes 
+*							 and common behavior for Chrome and Firefox
+*							 Changes to support CI of bftest-ui in Jenkins
+*							 with bf-ui for pipeline configuration testing.
 *
 */
 public class BFUIRunAlgorithmVldtn {
@@ -324,11 +328,17 @@ public class BFUIRunAlgorithmVldtn {
 	public void testStep6BFRunAlgoVldtn() throws Exception {
 		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep6BFRunAlgoVldtn() <<<<");  
 
-	    driver.findElement(By.xpath("//*[contains(text(),'Job Details')]"));
-	    driver.findElement(By.xpath("//*[contains(text(),'Name')]"));
+		driver.findElement(By.xpath("//*[contains(text(),jobDetails)]"));
+	    driver.findElement(By.xpath("//*[contains(text(),jobName)]"));
 		System.out.println(">> After validating Job Details section is displayed");
 	    
-	    driver.findElement(By.xpath("//*[contains(text(),bands)]"));
+		driver.findElement(By.xpath("//*[contains(text(),selectAlgo)]"));
+		System.out.println(">> After validating Select Algorithm section is displayed");
+
+	    driver.findElement(By.xpath("//*[contains(text(),imageRqmts)]"));
+		System.out.println(">> After validating Image Requirements section is displayed");
+
+		driver.findElement(By.xpath("//*[contains(text(),bands)]"));
 		System.out.println(">> After validating BANDS property is displayed");
 		
 	    driver.findElement(By.xpath("//*[contains(text(),cloudCover)]"));
@@ -337,9 +347,9 @@ public class BFUIRunAlgorithmVldtn {
 		// Submitting the Run Algorithm create job request
 		driver.findElement(By.cssSelector("button.Algorithm-startButton.typography-heading")).click();		   
 		System.out.println(">> After Submitting the Run Algorithm create job request");
+
 		Thread.sleep(2000); //Pause before exiting this test
 		
-		Thread.sleep(500); //Pause before exiting this test
 	}
 	
 	/**
@@ -349,11 +359,11 @@ public class BFUIRunAlgorithmVldtn {
 	@AfterSuite
 	public void cleanUp() throws Exception {
 		System.out.println(">>>> BFUIRunAlgorithmVldtn.cleanUp Closing Browser Session <<<<");
-/*	    driver.quit();
+	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
-	    } */	    
+	    } 	    
 	}
 
     /**
