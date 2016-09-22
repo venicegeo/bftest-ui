@@ -15,4 +15,9 @@
       <class name="beachfront.ui.test.BFSIOutputValidationTest"/>
     </classes>
   </test>
+  <test name="BF Run Algorithm Form Validation test">
+    <classes>
+      <class name="beachfront.ui.test.BFUIRunAlgorithmVldtn"/>
+    </classes>
+  </test>
 </suite>
