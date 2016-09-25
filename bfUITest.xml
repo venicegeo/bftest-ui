@@ -17,7 +17,7 @@
   </test>
   <test name="BF Run Algorithm Form Validation test">
     <classes>
-      <class name="beachfront.ui.test.BFUIRunAlgorithmVldtn"/>
+      <class name="beachfront.ui.test.BFUIJobsExcnVldtn`:wq"/>
     </classes>
   </test>
 </suite>

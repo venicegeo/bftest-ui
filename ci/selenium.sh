@@ -14,7 +14,7 @@ curl -o $root/$artifact -O $url
 java -jar $root/$artifact &
 jar_pid=$!
 
-mvn clean install
+mvn clean install -Dtest=beachfront.ui.test.BFUIJobsExcnVldtn
 
 code=$?
 
