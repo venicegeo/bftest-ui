@@ -16,6 +16,8 @@
 
 package beachfront.ui.test;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
@@ -34,27 +36,20 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import static org.junit.Assert.fail;
-
 /**
 *
 *    @author           RahulsIM
 *    PROJECT:          Beachfront project
-*    CLASS:            BFUIRunAlgorithmVldtn class to test the
-*                      Happy path scenario of validating Select
-*                      Algorithm form on LHS panel after user 
-*                      selects a response image from map canvas.
+*    CLASS:            BFUIJobsExcnVldtn class to test the
+*                      validation of the details and status of
+*					   the requested Run Algorithm job executing
+*					   and displayed under the Jobs panel.
 *              ** REVISION HISTORY : **
-*    Created:   9/14/2016
+*    Created:   9/22/2016
 *    Updates:
-*    			9/15/2016: Changes for testing and using Firefox 
-*				9/16 - 9/22: Changes to support latest code changes 
-*							 and common behavior for Chrome and Firefox
-*							 Changes to support CI of bftest-ui in Jenkins
-*							 with bf-ui for pipeline configuration testing.
 *
 */
-public class BFUIRunAlgorithmVldtn {
+public class BFUIJobsExcnVldtn {
 	  private WebDriver driver;
 	  private String baseUrl;
 	  private boolean acceptNextAlert = true;
@@ -62,7 +57,10 @@ public class BFUIRunAlgorithmVldtn {
 	  private String userName;
 	  private String passwd;
 	  private String apiKey;
+	  private String imageID;
 	  private BFUITestUtil bfUIUtil;
+	  private boolean jobSuccess = false;
+	  private boolean jobError = false;
 	  private static final String thumbnail = "Thumbnail";
 	  private static final String dateCaptured = "Date Captured";
 	  private static final String bands = "Bands";
@@ -72,23 +70,20 @@ public class BFUIRunAlgorithmVldtn {
 	  private static final String jobName = "Name";
 	  private static final String imageRqmts = "Image Requirements";
 	  private static final String selectAlgo = "Select Algorithm";
+	  private  SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+	  private  Calendar cal = Calendar.getInstance();
+	  private long runAlgoJobInitiated;
+
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeSuite
 	public void initialize() throws Exception {
-		System.out.println(">>>> In BFUIRunAlgorithmVldtn.initialize  <<<<");  
+		System.out.println(">>>> In BFUIJobsExcnVldtn.initialize  <<<<");  
 				
 //	    driver = new ChromeDriver();
 
-/*		
-		Thread.sleep(3000L);
-      ProfilesIni profile = new ProfilesIni();
-      FirefoxProfile firefoxProfile = profile.getProfile("default");
-
-      driver = new FirefoxDriver(firefoxProfile);
-*/
 		Thread.sleep(3000);
 		FirefoxProfile fp = new FirefoxProfile();
 		fp.setPreference("browser.startup.homepage", "about:blank");
@@ -104,15 +99,20 @@ public class BFUIRunAlgorithmVldtn {
 	    passwd = bfUIUtil.getPasswd();
 	    baseUrl = bfUIUtil.getBaseUrl();
 	    apiKey = bfUIUtil.getApiKey();
+	    imageID = bfUIUtil.getImageID();
 	    
 	    System.out.println("userName: "+userName);
 	    System.out.println("baseUrl: "+baseUrl);
 	    System.out.println("apiKey: "+apiKey);
+	    System.out.println("imageID: "+imageID);
 	    if (userName == null || passwd == null || baseUrl == null) {
 	    	throw new Exception("Beachfront UI URL and it's credentials failed to initialize from environment variables or properties file");
 	    }
 	    if (apiKey == null) {
 	    	System.out.println("**** WARNING !!! The API Key to authenticate with Image source system is NULL");
+	    }
+	    if (imageID == null) {
+	    	System.out.println("**** WARNING !!! The IMAGE ID of Image source system(LANDSAT) for expected result of response image is NULL");
 	    }
 	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
@@ -125,7 +125,7 @@ public class BFUIRunAlgorithmVldtn {
 	   */
 	  @Test
 	  public void testStep1BFLogin() throws Exception {
-		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep1BFLogin() <<<<");  
+		System.out.println(">>>> In BFUIJobsExcnVldtn.testStep1BFLogin() <<<<");  
 
 		driver.get(baseUrl);
 	    
@@ -158,7 +158,7 @@ public class BFUIRunAlgorithmVldtn {
 	 */
 	@Test(dependsOnMethods = {"testStep1BFLogin"})
 	public void testStep2BFUIImagerySubmit() throws Exception {
-		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep2BFUIImagerySubmit() <<<<");  
+		System.out.println(">>>> In BFUIJobsExcnVldtn.testStep2BFUIImagerySubmit() <<<<");  
 
 		driver.findElement(By.className("Navigation-linkCreateJob")).click(); 
 		System.out.println(">> After requesting create job form");
@@ -176,14 +176,6 @@ public class BFUIRunAlgorithmVldtn {
 		Mouse mouse = ((HasInputDevices) driver).getMouse();
 		mouse.mouseMove(hoverItem.getCoordinates());
 		Thread.sleep(200);
-/*		Actions builder = new Actions(driver);
-		Action drawAction = builder.moveByOffset(400, 200) // second point
-		            .click()
-		            .moveByOffset(720, 120)
-		            .click()
-		            .build();
-		drawAction.perform();
-*/		//canvas.click();
 		   
 	    System.out.println(">> After selecting bounding box as geographic search criteria area on canvas");
 		Thread.sleep(5000); //To avoid any race condition
@@ -193,35 +185,22 @@ public class BFUIRunAlgorithmVldtn {
 		driver.findElement(By.cssSelector("input[type=\"password\"]")).sendKeys(apiKey);
 		   
 		// Changing From date field for Date of Capture imagery search criteria
-		//System.out.println("++++ driver: "+driver.getWindowHandle());
-
 		driver.findElement(By.cssSelector("input[type=\"text\"]")).clear();
 		driver.findElement(By.cssSelector("input[type=\"text\"]")).sendKeys("2015-01-01");						
-		/*
-		if (driver instanceof ChromeDriver) {
-			driver.findElement(By.cssSelector("input[type=\"date\"]")).clear();
-			driver.findElement(By.cssSelector("input[type=\"date\"]")).sendKeys("01/01/2015");			
-		} else if (driver instanceof FirefoxDriver) {
-			driver.findElement(By.cssSelector("input[type=\"text\"]")).clear();
-			driver.findElement(By.cssSelector("input[type=\"text\"]")).sendKeys("01/01/2015");						
-		}
-		*/
+		Thread.sleep(500); //To avoid any race condition
 
-		Thread.sleep(2000); //To avoid any race condition
 		//Changing the cloud cover slider to <15%
 		//driver.findElement(By.cssSelector("input[type=\"range\"]")).click();
 		driver.findElement(By.cssSelector("input[type=\"range\"]")).sendKeys("15");
 		Thread.sleep(500); //To avoid any race condition
 
 		// Set Spatial Filter to "None"
-		//new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).click();
-		//new Select(driver.findElement(By.cssSelector("label.ImagerySearch-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
 	    new Select(driver.findElement(By.cssSelector("label.CatalogSearchCriteria-spatialFilter.forms-field-normal > select"))).selectByVisibleText("None");
 
 		// Submitting the search criteria
 		driver.findElement(By.cssSelector("button[type=\"submit\"]")).click();		   
 		System.out.println(">> After entering data and submitting Source Imagery search form");
-		Thread.sleep(2000); //Pause before exiting this test
+		Thread.sleep(3000); //Pause before exiting this test
 		
 	}
 
@@ -236,7 +215,7 @@ public class BFUIRunAlgorithmVldtn {
 	 */
 	@Test(dependsOnMethods = {"testStep2BFUIImagerySubmit"})
 	public void testStep3BFSIResponsePopup() throws Exception {
-		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep3BFSIResponsePopup() <<<<");  
+		System.out.println(">>>> In BFUIJobsExcnVldtn.testStep3BFSIResponsePopup() <<<<");  
 
 		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
 	    Thread.sleep(200); //To avoid any race condition
@@ -257,7 +236,6 @@ public class BFUIRunAlgorithmVldtn {
 	      System.out.println("After validating properties popup is displayed for the response image selected");
 	    }
 	    
-		//System.out.println("After validating properties popup is displayed for the response image selected");
 		Thread.sleep(2000); //Pause before exiting this test
 	}
 	
@@ -274,7 +252,10 @@ public class BFUIRunAlgorithmVldtn {
 	 */
 	@Test(dependsOnMethods = {"testStep3BFSIResponsePopup"})
 	public void testStep4BFSIRespPropsVldtn() throws Exception {
-		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep4BFSIRespPropsVldtn() <<<<");  
+		System.out.println(">>>> In BFUIJobsExcnVldtn.testStep4BFSIRespPropsVldtn() <<<<");  
+
+		WebElement canvas = driver.findElement(By.cssSelector(".PrimaryMap-root canvas"));     
+	    Thread.sleep(200); //To avoid any race condition
 
 	    driver.findElement(By.xpath("//*[contains(text(),thumbnail)]"));
 		System.out.println(">> After validating THUMBNAIL property is displayed");
@@ -291,7 +272,7 @@ public class BFUIRunAlgorithmVldtn {
 	    driver.findElement(By.xpath("//*[contains(text(),sensorName)]"));
 		System.out.println(">> After validating SENSOR NAME property is displayed");
 
-		Thread.sleep(500); //Pause before exiting this test
+		Thread.sleep(1000); //Pause before exiting this test
 	}
 
 	/**
@@ -303,7 +284,7 @@ public class BFUIRunAlgorithmVldtn {
 	 */
 	@Test(dependsOnMethods = {"testStep4BFSIRespPropsVldtn"})
 	public void testStep5RespImageLink() throws Exception {
-		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep5RespImageLink() <<<<");  
+		System.out.println(">>>> In BFUIJobsExcnVldtn.testStep5RespImageLink() <<<<");  
 	    
 		By clickLinkElem = By.linkText("Click here to open");
     	if (this.isElementPresent(clickLinkElem)) {
@@ -326,7 +307,7 @@ public class BFUIRunAlgorithmVldtn {
 	 */
 	@Test(dependsOnMethods = {"testStep5RespImageLink"})
 	public void testStep6BFRunAlgoVldtn() throws Exception {
-		System.out.println(">>>> In BFUIRunAlgorithmVldtn.testStep6BFRunAlgoVldtn() <<<<");  
+		System.out.println(">>>> In BFUIJobsExcnVldtn.testStep6BFRunAlgoVldtn() <<<<");  
 
 		driver.findElement(By.xpath("//*[contains(text(),jobDetails)]"));
 	    driver.findElement(By.xpath("//*[contains(text(),jobName)]"));
@@ -338,32 +319,94 @@ public class BFUIRunAlgorithmVldtn {
 	    driver.findElement(By.xpath("//*[contains(text(),imageRqmts)]"));
 		System.out.println(">> After validating Image Requirements section is displayed");
 
-		driver.findElement(By.xpath("//*[contains(text(),bands)]"));
+	    driver.findElement(By.xpath("//*[contains(text(),bands)]"));
 		System.out.println(">> After validating BANDS property is displayed");
 		
 	    driver.findElement(By.xpath("//*[contains(text(),cloudCover)]"));
 		System.out.println(">> After validating CLOUD COVER property is displayed");
 
 		// Submitting the Run Algorithm create job request
-		driver.findElement(By.cssSelector("button.Algorithm-startButton.typography-heading")).click();		   
-		System.out.println(">> After Submitting the Run Algorithm create job request");
-
+		driver.findElement(By.cssSelector("button.Algorithm-startButton.typography-heading")).click();
+		//runAlgoJobInitiated = dateFormat.format(cal.getTimeInMillis());
+		runAlgoJobInitiated = cal.getTimeInMillis();
+		System.out.println(">> After Submitting the Run Algorithm create job request at: "+dateFormat.format(runAlgoJobInitiated));
 		Thread.sleep(2000); //Pause before exiting this test
 		
 	}
 	
+	/**
+	 *  testStep7JobsExcnVldtn() for validation of Run Algorithm form on LHS panel:
+ 	 *		i.Job Name 
+     *      ii.BANDS  
+     *      iii.CLOUD COVER
+	 *  
+	 * @throws Exception
+	 */
+	@Test(dependsOnMethods = {"testStep6BFRunAlgoVldtn"})
+	public void testStep7JobsExcnVldtn() throws Exception {
+		System.out.println(">>>> In BFUIJobsExcnVldtn.testStep7JobsExcnVldtn() <<<<");  
+
+	    driver.findElement(By.xpath("//*[contains(text(),imageID)]"));
+	    System.out.println(">> After validating requested Run Algorithm Job for image id: " +imageID+"  is part of the jobs list");
+
+
+		By jobStatusError = By.className("JobStatus-failed");
+        if (this.isElementPresent(jobStatusError)) {
+        	System.out.println(">> Job is already in Error Status, ");
+        	jobError = true;
+        }
+		
+		if (!jobError){
+			By jobStatusRunning = By.className("JobStatus-running");
+			By jobStatusSuccess = By.className("JobStatus-succeeded");
+			if (!jobSuccess && this.isElementPresent(jobStatusRunning)) {
+	    		System.out.println(">> This Job is still Running");
+	    		jobSuccess = false;
+	    		while (!this.jobSuccess) {
+	    			Thread.sleep(10000);
+	    			driver.navigate().refresh();
+	    			Thread.sleep(2000);
+	    			jobStatusError = By.className("JobStatus-failed");    			    			
+	    			if (this.isElementPresent(jobStatusError)) {
+	    	    		System.out.println(">> ** Job has FAILED with ERROR Status");
+	    	    		jobError = true;
+	    	    		break;
+	    	    	}
+	    			driver.navigate().refresh();
+	    			Thread.sleep(2000);
+	    			jobStatusRunning = By.className("JobStatus-running");
+	    			if (this.isElementPresent(jobStatusRunning)) {
+	    	    		System.out.println(">> This Job is still Running");
+	    	    		jobSuccess = false;
+	    	    	} else {
+	    	    		driver.navigate().refresh();
+		    			Thread.sleep(2000);
+	    	    		jobStatusSuccess = By.className("JobStatus-succeeded");
+		    			if (this.isElementPresent(jobStatusSuccess)) {
+		    	    		System.out.println(">> Job has COMPLETED with SUCCESS status");
+		    	    		jobSuccess = true;
+		    	    		break;
+		    	    	}
+	    	    	}
+	    		}
+			}
+    	}
+	    		
+	}
+
 	/**
 	 *  To clean up the resources used and close the browser session
 	 * @throws Exception
 	 */
 	@AfterSuite
 	public void cleanUp() throws Exception {
-		System.out.println(">>>> BFUIRunAlgorithmVldtn.cleanUp Closing Browser Session <<<<");
-	    driver.quit();
+		System.out.println(">>>> BFUIJobsExcnVldtn.cleanUp Closing Browser Session <<<<");
+/*	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
-	    } 	    
+	    }
+*/ 	    
 	}
 
     /**
