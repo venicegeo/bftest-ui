@@ -35,6 +35,7 @@ import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+import static org.junit.Assert.fail;
 
 /**
 *
@@ -168,7 +169,7 @@ public class BFUIJobsExcnVldtn {
 	    Thread.sleep(200); //To avoid any race condition
 
 		Actions builder = new Actions(driver);
-		builder.moveToElement(canvas,540,240).click().build().perform();
+		builder.moveToElement(canvas,540,180).click().build().perform();
 	    canvas.click();
 		Thread.sleep(1000); //To avoid any race condition
 
@@ -221,17 +222,18 @@ public class BFUIJobsExcnVldtn {
 	    Thread.sleep(200); //To avoid any race condition
 	    
 	    Actions builder = new Actions(driver);
-	    builder.moveToElement(canvas,540,245).click().build().perform();
+	    builder.moveToElement(canvas,540,180).click().build().perform();
 	    //canvas.click(); // With or without jenkins build fails
 	    Thread.sleep(1000); //To avoid any race condition
 		
 	    System.out.println("After moving to canvas and selecting image jpg on canvas");
-
-	    By clickLinkElem = By.xpath("//*[@title='LC81950572015002LGN00']");
+	    
+//	    By clickLinkElem = By.xpath("//*[@title='LC81950572015002LGN00']");
+	    By clickLinkElem = By.xpath("//*[@title='LC81960502016124LGN00']");
 	    if (this.isElementPresent(clickLinkElem)) {
   	      // Ensuring the properties windows is displayed for the image selected
 	      // LANDSAT image id for selected image should be the title.
-	      driver.findElement(By.xpath("//*[@title='LC81950572015002LGN00']"));
+	      driver.findElement(By.xpath("//*[@title='LC81960502016124LGN00']"));
 	      //driver.findElement(By.xpath("//*[@title='LC81210602015204LGN00']"));
 	      System.out.println("After validating properties popup is displayed for the response image selected");
 	    }
@@ -365,33 +367,33 @@ public class BFUIJobsExcnVldtn {
 	    		while (!this.jobSuccess) {
 	    			Thread.sleep(10000);
 	    			driver.navigate().refresh();
-	    			Thread.sleep(2000);
-	    			jobStatusError = By.className("JobStatus-failed");    			    			
-	    			if (this.isElementPresent(jobStatusError)) {
-	    	    		System.out.println(">> ** Job has FAILED with ERROR Status");
-	    	    		jobError = true;
+	    			Thread.sleep(1000);
+    	    		jobStatusSuccess = By.className("JobStatus-succeeded");
+	    			if (this.isElementPresent(jobStatusSuccess)) {
+	    	    		System.out.println(">> Job has COMPLETED with SUCCESS status");
+	    	    		jobSuccess = true;
 	    	    		break;
 	    	    	}
 	    			driver.navigate().refresh();
-	    			Thread.sleep(2000);
+	    			Thread.sleep(1000);
 	    			jobStatusRunning = By.className("JobStatus-running");
 	    			if (this.isElementPresent(jobStatusRunning)) {
 	    	    		System.out.println(">> This Job is still Running");
 	    	    		jobSuccess = false;
 	    	    	} else {
 	    	    		driver.navigate().refresh();
-		    			Thread.sleep(2000);
-	    	    		jobStatusSuccess = By.className("JobStatus-succeeded");
-		    			if (this.isElementPresent(jobStatusSuccess)) {
-		    	    		System.out.println(">> Job has COMPLETED with SUCCESS status");
-		    	    		jobSuccess = true;
+		    			Thread.sleep(1000);
+		    			jobStatusError = By.className("JobStatus-failed");    			    			
+		    			if (this.isElementPresent(jobStatusError)) {
+		    	    		System.out.println(">> ** Job has FAILED with ERROR Status");
+		    	    		jobError = true;
+		    	    		jobSuccess = false;
 		    	    		break;
 		    	    	}
 	    	    	}
 	    		}
 			}
-    	}
-	    		
+    	}	    		
 	}
 
 	/**
@@ -401,12 +403,12 @@ public class BFUIJobsExcnVldtn {
 	@AfterSuite
 	public void cleanUp() throws Exception {
 		System.out.println(">>>> BFUIJobsExcnVldtn.cleanUp Closing Browser Session <<<<");
-/*	    driver.quit();
+	    driver.quit();
 	    String verificationErrorString = verificationErrors.toString();
 	    if (!"".equals(verificationErrorString)) {
 	      fail(verificationErrorString);
 	    }
-*/ 	    
+ 	    
 	}
 
     /**
